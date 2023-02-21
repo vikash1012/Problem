@@ -5,6 +5,7 @@ import com.olx.inventoryManagementSystem.controller.dto.CarAttributes;
 import com.olx.inventoryManagementSystem.controller.dto.CreateInventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryRequest;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
+import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,9 +31,14 @@ public class InventoryController {
 
     @PostMapping("/inventories")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateInventoryResponse createCar(@RequestBody InventoryRequest<CarAttributes> inventoryRequest) {
+    public CreateInventoryResponse createInventory(@RequestBody InventoryRequest<CarAttributes> inventoryRequest) {
         String inventoryId = this.inventoryService.createInventory(inventoryRequest);
         return new CreateInventoryResponse(inventoryId);
+    }
+
+    @GetMapping("/inventories/{sku}")
+    public InventoryResponse getInventory(@PathVariable String sku) throws InventoryNotFoundException {
+        return this.inventoryService.getInventory(sku);
     }
 
     @GetMapping("/inventories")

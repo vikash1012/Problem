@@ -3,6 +3,7 @@ package com.olx.inventoryManagementSystem.service;
 import com.olx.inventoryManagementSystem.controller.dto.CarAttributes;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryRequest;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
+import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
 import com.olx.inventoryManagementSystem.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,12 @@ public class InventoryService {
 
         Inventory inventory = new Inventory(sku.toString(),inventoryRequest.getType(),inventoryRequest.getLocation(),LocalDateTime.now(),LocalDateTime.now(),"user","user", (CarAttributes) inventoryRequest.getAttributes(),inventoryRequest.getCostPrice(),inventoryRequest.getSecondaryStatus());
         return this.inventoryRepository.createInventory(inventory);
+    }
+
+    public InventoryResponse getInventory(String InventorySku) throws InventoryNotFoundException {
+        Inventory inventory = this.inventoryRepository.findInventory(InventorySku);
+        InventoryResponse inventoryResponse = new InventoryResponse(inventory.getSku(), inventory.getType(), inventory.getStatus(),inventory.getLocation(),inventory.getCreatedAt(),inventory.getUpdatedAt(),inventory.getCreatedBy(),inventory.getUpdatedBy(),inventory.getAttributes(),inventory.getCostPrice(),inventory.getSecondaryStatus());
+        return inventoryResponse;
     }
 
     public List<InventoryResponse> getInventories(Pageable pageable) {

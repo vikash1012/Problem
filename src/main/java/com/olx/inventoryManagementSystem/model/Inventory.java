@@ -22,10 +22,11 @@ import java.util.ArrayList;
 @EqualsAndHashCode
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Inventory {
-    @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")
     private int id;
+    @Id
     private String sku;
     private String type;
     private String status="created";
