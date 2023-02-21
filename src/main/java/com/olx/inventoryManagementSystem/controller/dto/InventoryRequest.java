@@ -16,7 +16,7 @@ public class InventoryRequest {
     String location;
     float costPrice;
 
-    CarAttributes attributes;
+     Attributes attributes;
 
 
 

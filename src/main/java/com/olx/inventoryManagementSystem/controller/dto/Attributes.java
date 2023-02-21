@@ -5,13 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarAttributes {
+public class Attributes {
     String vin;
     String make;
     String model;

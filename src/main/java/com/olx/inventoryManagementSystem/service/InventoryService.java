@@ -22,11 +22,8 @@ public class InventoryService {
     }
     public String createInventory(InventoryRequest inventoryRequest)  {
         UUID sku = UUID.randomUUID();
-        String uuidAsString = sku.toString();
-        Gson g=new Gson();
-        String attributes=g.toJson(inventoryRequest.getAttributes());
-        String secondaryStatus=g.toJson(inventoryRequest.getSecondaryStatus());
-        Inventory inventory = new Inventory(sku.toString(),inventoryRequest.getType(),inventoryRequest.getLocation(),LocalDateTime.now(),LocalDateTime.now(),"user","user",attributes,inventoryRequest.getCostPrice(),secondaryStatus );
+
+        Inventory inventory = new Inventory(sku.toString(),inventoryRequest.getType(),inventoryRequest.getLocation(),LocalDateTime.now(),LocalDateTime.now(),"user","user",inventoryRequest.getAttributes(),inventoryRequest.getCostPrice(),inventoryRequest.getSecondaryStatus());
         return this.inventoryRepository.createInventory(inventory);
     }
 }

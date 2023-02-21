@@ -1,14 +1,19 @@
 package com.olx.inventoryManagementSystem.model;
 
 import com.google.gson.JsonObject;
+import com.olx.inventoryManagementSystem.controller.dto.Attributes;
+import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,16 +40,18 @@ public class Inventory {
     private String createdBy;
     @Column(name="updated_by")
     private String updatedBy;
-    @Column(name="attribute",columnDefinition = "json")
-    private String attribute;
+    @Column(name="attribute",columnDefinition = "jsonb")
+    @Type(type ="jsonb")
+    private Attributes attributes;
     @Column(name="cost_price")
     private float costPrice;
     @Column(name="sold_at")
     private float soldAt;
-    @Column(name="secondary_status",columnDefinition = "json")
-    private  String secondaryStatus;
+    @Column(name="secondary_status",columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    private ArrayList<SecondaryStatus> secondaryStatus;
 
-    public Inventory(String sku, String type, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, String attribute, float costPrice, String secondaryStatus) {
+    public Inventory(String sku, String type, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, Attributes attributes, float costPrice,  ArrayList<SecondaryStatus> secondaryStatus) {
         this.sku = sku;
         this.type = type;
 
@@ -52,7 +60,7 @@ public class Inventory {
         this.updatedAt = updatedAt;
         this.createdBy = createdBy;
         this.updatedBy = updatedBy;
-        this.attribute = attribute;
+        this.attributes = attributes;
         this.costPrice = costPrice;
         this.secondaryStatus = secondaryStatus;
     }
