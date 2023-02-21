@@ -1,7 +1,6 @@
 package com.olx.inventoryManagementSystem.model;
 
-import com.google.gson.JsonObject;
-import com.olx.inventoryManagementSystem.controller.dto.Attributes;
+import com.olx.inventoryManagementSystem.controller.dto.CarAttributes;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,6 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Entity
 @Table
@@ -40,9 +38,9 @@ public class Inventory {
     private String createdBy;
     @Column(name="updated_by")
     private String updatedBy;
-    @Column(name="attribute",columnDefinition = "jsonb")
+    @Column(name="attributes",columnDefinition = "jsonb")
     @Type(type ="jsonb")
-    private Attributes attributes;
+    private CarAttributes attributes;
     @Column(name="cost_price")
     private float costPrice;
     @Column(name="sold_at")
@@ -51,7 +49,7 @@ public class Inventory {
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;
 
-    public Inventory(String sku, String type, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, Attributes attributes, float costPrice,  ArrayList<SecondaryStatus> secondaryStatus) {
+    public Inventory(String sku, String type, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, CarAttributes attributes, float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
         this.sku = sku;
         this.type = type;
 

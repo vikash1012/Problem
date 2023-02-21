@@ -11,16 +11,11 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @Getter
 @Setter
-public class InventoryRequest {
+public class InventoryRequest<T> {
     String type;
     String location;
     float costPrice;
-
-     Attributes attributes;
-
-
+    T attributes;
 
     ArrayList<SecondaryStatus> secondaryStatus;
-
-
 }
