@@ -1,31 +1,26 @@
 package com.olx.inventoryManagementSystem.controller.dto;
 
-import com.olx.inventoryManagementSystem.model.CarAttributes;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 
+import java.util.ArrayList;
+
+@AllArgsConstructor
 @Getter
 @Setter
 public class InventoryRequest {
     String type;
     String location;
     float costPrice;
-    CarAttributes carAttributes;
-    SecondaryStatus secondaryStatus;
 
-    public CarAttributes getCarAttributes() {
-        return carAttributes;
-    }
+    CarAttributes attributes;
 
-    public SecondaryStatus getSecondaryStatus() {
-        return secondaryStatus;
-    }
 
-    public InventoryRequest(String type, String location, float costPrice, CarAttributes carAttributes, SecondaryStatus secondaryStatus) {
-        this.type = type;
-        this.location = location;
-        this.costPrice = costPrice;
-        this.carAttributes = carAttributes;
-        this.secondaryStatus = secondaryStatus;
-    }
+
+    ArrayList<SecondaryStatus> secondaryStatus;
+
+
 }

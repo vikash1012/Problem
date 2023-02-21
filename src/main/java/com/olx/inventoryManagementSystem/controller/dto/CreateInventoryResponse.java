@@ -7,7 +7,7 @@ public class CreateInventoryResponse {
         this.sku = sku;
     }
 
-    public String getId() {
+    public String getSku() {
         return sku;
     }
 }

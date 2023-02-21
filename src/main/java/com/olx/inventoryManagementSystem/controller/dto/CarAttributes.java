@@ -5,11 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+import javax.persistence.Entity;
+
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SecondaryStatus {
-    String name;
-    String status;
+public class CarAttributes {
+    String vin;
+    String make;
+    String model;
+    String trim;
+    int year;
+
 }
