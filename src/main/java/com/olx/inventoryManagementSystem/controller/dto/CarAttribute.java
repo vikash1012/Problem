@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarAttributes {
+public class CarAttribute {
     String vin;
     String make;
     String model;

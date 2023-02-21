@@ -1,6 +1,6 @@
 package com.olx.inventoryManagementSystem.model;
 
-import com.olx.inventoryManagementSystem.controller.dto.CarAttributes;
+import com.olx.inventoryManagementSystem.controller.dto.CarDto;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
@@ -23,10 +23,11 @@ import java.util.ArrayList;
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Inventory {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")
     private int id;
-    @Id
+
     private String sku;
     private String type;
     private String status="created";
@@ -41,7 +42,7 @@ public class Inventory {
     private String updatedBy;
     @Column(name="attributes",columnDefinition = "jsonb")
     @Type(type ="jsonb")
-    private CarAttributes attributes;
+    private Object attributes;
     @Column(name="cost_price")
     private float costPrice;
     @Column(name="sold_at")
@@ -50,7 +51,7 @@ public class Inventory {
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;
 
-    public Inventory(String sku, String type, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, CarAttributes attributes, float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
+    public Inventory(String sku, String type, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, Object attributes, float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
         this.sku = sku;
         this.type = type;
 

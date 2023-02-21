@@ -1,6 +1,6 @@
 package com.olx.inventoryManagementSystem.service;
 
-import com.olx.inventoryManagementSystem.controller.dto.CarAttributes;
+import com.olx.inventoryManagementSystem.controller.dto.CarDto;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
@@ -35,7 +35,7 @@ class InventoryServiceTest {
 
     @Test
     void ShouldReturnListOfInventories() {
-        CarAttributes attributes = new CarAttributes("AP42BM1234","Tata", "Nexon", "EX", 2021);
+        CarDto attributes = new CarDto("AP42BM1234","Tata", "Nexon", "EX", 2021);
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku")));;
         secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
@@ -51,7 +51,7 @@ class InventoryServiceTest {
 
     @Test
     void ShouldReturnInventory() throws InventoryNotFoundException {
-        CarAttributes attributes = new CarAttributes("AP42BM1234","Tata", "Nexon", "EX", 2021);
+        CarDto attributes = new CarDto("AP42BM1234","Tata", "Nexon", "EX", 2021);
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
         secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
         secondaryStatus.add(new SecondaryStatus("transit","in-progress"));

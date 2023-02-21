@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -23,7 +21,7 @@ public class InventoryResponse {
     private LocalDateTime updatedAt;
     private String createdBy;
     private String updatedBy;
-    private CarAttributes attributes;
+    private Object attributes;
     private float costPrice;
     private ArrayList<SecondaryStatus> secondaryStatus;
 }

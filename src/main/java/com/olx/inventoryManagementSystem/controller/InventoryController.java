@@ -1,14 +1,13 @@
 package com.olx.inventoryManagementSystem.controller;
 
 //import com.olx.inventoryManagementSystem.controller.dto.CarAttributes;
-import com.olx.inventoryManagementSystem.controller.dto.CarAttributes;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import com.olx.inventoryManagementSystem.controller.dto.CreateInventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryRequest;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -31,7 +30,7 @@ public class InventoryController {
 
     @PostMapping("/inventories")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateInventoryResponse createInventory(@RequestBody InventoryRequest<CarAttributes> inventoryRequest) {
+    public CreateInventoryResponse createInventory(@RequestBody InventoryRequest inventoryRequest) throws InvalidTypeIdException {
         String inventoryId = this.inventoryService.createInventory(inventoryRequest);
         return new CreateInventoryResponse(inventoryId);
     }

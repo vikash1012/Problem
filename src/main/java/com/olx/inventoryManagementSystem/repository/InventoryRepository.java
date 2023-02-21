@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+
 public class InventoryRepository {
 
     JPAInventoryRepository jpaInventoryRepository;
@@ -28,6 +30,7 @@ public class InventoryRepository {
 
     public Inventory findInventory(String sku) throws InventoryNotFoundException {
         //Integer InventoryId = Integer.parseInt(id);
+
         Optional<Inventory> optionalCar = this.jpaInventoryRepository.findById(sku);
         if (optionalCar.isEmpty()) {
             throw new InventoryNotFoundException("Inventory not found for sku - " + sku);
