@@ -48,10 +48,10 @@ public class InventoryController {
         return this.inventoryService.getInventories(pageable);
     }
 
-    @PutMapping("/inventories/secondaryStatus/{sku}")
-    @ResponseStatus(HttpStatus.OK)
-    public InventoryResponse updateStatus(@PathVariable String sku,@RequestBody ArrayList<SecondaryStatus> secondaryStatuses) throws InventoryNotFoundException {
-        return this.inventoryService.updateStatus(sku, secondaryStatuses);
+    @PutMapping("/inventories/{sku}/statuses")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatus(@PathVariable String sku,@RequestBody ArrayList<SecondaryStatus> secondaryStatuses) throws InventoryNotFoundException {
+         this.inventoryService.updateStatus(sku, secondaryStatuses);
 
     }
 }
