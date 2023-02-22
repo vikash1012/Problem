@@ -11,12 +11,12 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @Data
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type",visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type",visible = true,defaultImpl = NoDto.class)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = CarDto.class, name = "car"),
         @JsonSubTypes.Type(value = BikeDto.class, name = "bike")
 })
-public class InventoryRequest {
+public class InventoryRequest  {
     String type;
     String location;
     float costPrice;

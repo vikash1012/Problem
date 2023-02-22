@@ -1,6 +1,7 @@
 package com.olx.inventoryManagementSystem.service;
 
 import com.olx.inventoryManagementSystem.controller.dto.*;
+import com.olx.inventoryManagementSystem.exceptions.InvalidTypeException;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
 import com.olx.inventoryManagementSystem.repository.InventoryRepository;
@@ -24,9 +25,9 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
-    public String createInventory(InventoryRequest inventoryRequest) throws RuntimeException {
+    public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
         if (!(inventoryRequest instanceof CarDto) && !(inventoryRequest instanceof BikeDto)) {
-            throw new RuntimeException("This service is not valid for your given type");
+            throw new InvalidTypeException("Invalid Inventory Type");
         }
         Object attributes=new Object();
         if (inventoryRequest instanceof CarDto) {
