@@ -1,9 +1,6 @@
 package com.olx.inventoryManagementSystem.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +9,7 @@ import java.util.ArrayList;
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
+@NoArgsConstructor
 public class InventoryResponse {
     private String sku;
     private String type;

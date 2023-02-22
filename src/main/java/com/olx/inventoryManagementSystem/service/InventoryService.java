@@ -58,4 +58,26 @@ public class InventoryService {
         }
         return listOfGetResponses;
     }
+
+    public InventoryResponse updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus) throws InventoryNotFoundException {
+        Inventory inventory = this.inventoryRepository.findInventory(sku);
+        ArrayList<SecondaryStatus> inventorysecondaryStatus=inventory.getSecondaryStatus();
+        for(SecondaryStatus statuses :secondaryStatus){
+            if(!inventorysecondaryStatus.contains(statuses)){
+                this.inventoryRepository.addStatus(sku,statuses);
+            }
+            else if(inventorysecondaryStatus.contains(statuses)){
+                 this.inventoryRepository.updateStatus(sku,statuses);
+            }
+
+
+        }
+        inventory = this.inventoryRepository.findInventory(sku);
+        return new InventoryResponse(inventory.getSku(), inventory.getType(), inventory.getStatus(), inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(), inventory.getCreatedBy(), inventory.getUpdatedBy(), inventory.getAttributes(), inventory.getCostPrice(), inventory.getSecondaryStatus());
+
+
+
+
+
+    }
 }

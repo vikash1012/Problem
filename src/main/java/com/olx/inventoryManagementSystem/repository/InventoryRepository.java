@@ -1,5 +1,6 @@
 package com.olx.inventoryManagementSystem.repository;
 
+import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,5 +42,33 @@ public class InventoryRepository {
 
     public Page<Inventory> fetchInventories(Pageable pageable) {
         return this.jpaInventoryRepository.findAll(pageable);
+    }
+
+    public void updateStatus(String sku, SecondaryStatus statuses) {
+        Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
+        Inventory inventory=inventories.get();
+        ArrayList<SecondaryStatus> statusArrayList=inventory.getSecondaryStatus();
+        for(SecondaryStatus status:statusArrayList){
+            if(status.getName().equals(statuses.getName())){
+                status.setStatus(statuses.getStatus());
+
+            }
+        }
+        inventory.setSecondaryStatus(statusArrayList);
+        this.jpaInventoryRepository.save(inventory);
+
+
+
+    }
+
+    public void addStatus(String sku,SecondaryStatus statuses) {
+        Optional<Inventory> inventories= this.jpaInventoryRepository.findById(sku);
+        Inventory inventory=inventories.get();
+        ArrayList<SecondaryStatus> statusArrayList=inventory.getSecondaryStatus();
+        statusArrayList.add(statuses);
+        this.jpaInventoryRepository.save(inventory);
+
+
+
     }
 }

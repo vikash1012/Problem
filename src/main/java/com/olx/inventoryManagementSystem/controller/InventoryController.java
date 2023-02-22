@@ -4,17 +4,18 @@ package com.olx.inventoryManagementSystem.controller;
 import com.olx.inventoryManagementSystem.controller.dto.CreateInventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryRequest;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
+import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTypeException;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,5 +46,12 @@ public class InventoryController {
             page = 0, size = 10,
             sort = "sku", direction = Sort.Direction.ASC) Pageable pageable) {
         return this.inventoryService.getInventories(pageable);
+    }
+
+    @PutMapping("/inventories/secondaryStatus/{sku}")
+    @ResponseStatus(HttpStatus.OK)
+    public InventoryResponse updateStatus(@PathVariable String sku,@RequestBody ArrayList<SecondaryStatus> secondaryStatuses) throws InventoryNotFoundException {
+        return this.inventoryService.updateStatus(sku, secondaryStatuses);
+
     }
 }
