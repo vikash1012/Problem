@@ -42,7 +42,7 @@ class InventoryServiceTest {
         ((ObjectNode) attributes).put("make", "Tata");
         ((ObjectNode) attributes).put("model", "Nexon");
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku")));;
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku")));
         secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
         secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
         List<InventoryResponse> expectedInventories = List.of(new InventoryResponse("d59fdbd5-0c56-4a79-8905-6989601890be", "car", "created", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus));
