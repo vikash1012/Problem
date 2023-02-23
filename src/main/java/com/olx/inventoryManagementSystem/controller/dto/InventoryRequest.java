@@ -2,6 +2,7 @@ package com.olx.inventoryManagementSystem.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -11,14 +12,11 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @Data
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type",visible = true,defaultImpl = NoDto.class)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = CarDto.class, name = "car"),
-        @JsonSubTypes.Type(value = BikeDto.class, name = "bike")
-})
 public class InventoryRequest  {
     String type;
     String location;
+    JsonNode attributes;
     float costPrice;
     ArrayList<SecondaryStatus> secondaryStatus;
+
 }

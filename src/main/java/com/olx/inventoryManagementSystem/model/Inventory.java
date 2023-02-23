@@ -1,6 +1,5 @@
 package com.olx.inventoryManagementSystem.model;
 
-import com.olx.inventoryManagementSystem.controller.dto.CarDto;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
@@ -39,7 +38,7 @@ public class Inventory {
     @Column(name="updated_by")
     private String updatedBy;
     @Column(name="attributes",columnDefinition = "jsonb")
-    @Type(type ="jsonb")
+    @Type(type= "jsonb")
     private Object attributes;
     @Column(name="cost_price")
     private float costPrice;

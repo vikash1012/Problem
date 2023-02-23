@@ -1,5 +1,6 @@
 package com.olx.inventoryManagementSystem.repository;
 
+import com.google.gson.JsonArray;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
@@ -64,7 +65,7 @@ public class InventoryRepository {
     public void addStatus(String sku,SecondaryStatus statuses) {
         Optional<Inventory> inventories= this.jpaInventoryRepository.findById(sku);
         Inventory inventory=inventories.get();
-        ArrayList<SecondaryStatus> statusArrayList=inventory.getSecondaryStatus();
+      ArrayList<SecondaryStatus> statusArrayList=inventory.getSecondaryStatus();
         statusArrayList.add(statuses);
         this.jpaInventoryRepository.save(inventory);
 

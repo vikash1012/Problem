@@ -1,5 +1,6 @@
 package com.olx.inventoryManagementSystem.controller.dto;
 
+import com.google.gson.JsonArray;
 import lombok.*;
 
 import java.time.LocalDateTime;

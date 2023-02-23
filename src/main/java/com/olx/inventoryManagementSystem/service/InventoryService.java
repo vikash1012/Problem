@@ -1,5 +1,10 @@
 package com.olx.inventoryManagementSystem.service;
 
+import aj.org.objectweb.asm.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.olx.inventoryManagementSystem.controller.dto.*;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTypeException;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
@@ -11,9 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class InventoryService {
@@ -26,22 +29,17 @@ public class InventoryService {
     }
 
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
-        if (!(inventoryRequest instanceof CarDto) && !(inventoryRequest instanceof BikeDto)) {
-            throw new InvalidTypeException("Invalid Inventory Type");
+        if(!inventoryRequest.getType().equalsIgnoreCase("car")&&!inventoryRequest.getType().equalsIgnoreCase("bike")){
+            throw new InvalidTypeException(inventoryRequest.getType()+" is not supported");
         }
-        Object attributes = new Object();
-        if (inventoryRequest instanceof CarDto) {
-            CarDto carDto = (CarDto) inventoryRequest;
-            attributes = carDto.getAttributes();
-        } else if (inventoryRequest instanceof BikeDto) {
-            BikeDto bikeDto = (BikeDto) inventoryRequest;
-            attributes = bikeDto.getAttributes();
-        }
-        UUID sku = UUID.randomUUID();
-        Inventory inventory = new Inventory(sku.toString(), inventoryRequest.getType(), inventoryRequest.getLocation(), LocalDateTime.now(), LocalDateTime.now(), "user", "user", attributes, inventoryRequest.getCostPrice(), inventoryRequest.getSecondaryStatus());
-        return this.inventoryRepository.createInventory(inventory);
-    }
 
+
+        UUID sku = UUID.randomUUID();
+        Inventory inventory = new Inventory(sku.toString(),inventoryRequest.getType(), inventoryRequest.getLocation(), LocalDateTime.now(), LocalDateTime.now(), "user", "user", (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(), inventoryRequest.getSecondaryStatus());
+        return this.inventoryRepository.createInventory(inventory);
+
+
+        }
     public InventoryResponse getInventory(String InventorySku) throws InventoryNotFoundException {
         Inventory inventory = this.inventoryRepository.findInventory(InventorySku);
         InventoryResponse inventoryResponse = new InventoryResponse(inventory.getSku(), inventory.getType(), inventory.getStatus(), inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(), inventory.getCreatedBy(), inventory.getUpdatedBy(), inventory.getAttributes(), inventory.getCostPrice(), inventory.getSecondaryStatus());
@@ -60,7 +58,7 @@ public class InventoryService {
 
     public void updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus) throws InventoryNotFoundException {
         Inventory inventory = this.inventoryRepository.findInventory(sku);
-        ArrayList<SecondaryStatus> inventorysecondaryStatus = inventory.getSecondaryStatus();
+         ArrayList<SecondaryStatus> inventorysecondaryStatus = inventory.getSecondaryStatus();
         for (SecondaryStatus statuses : secondaryStatus) {
             if (!inventorysecondaryStatus.contains(statuses)) {
                 this.inventoryRepository.addStatus(sku, statuses);
