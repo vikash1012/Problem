@@ -24,7 +24,6 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")
     private int id;
-
     private String sku;
     private String type;
     private String status="created";

@@ -38,19 +38,21 @@ public class InventoryRepository {
         return this.jpaInventoryRepository.findAll(pageable);
     }
 
-    public void updateStatus(String sku, SecondaryStatus statuses) {
+    public String updateStatus(String sku, SecondaryStatus statuses) {
         Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
         Inventory inventory = inventories.get();
         Inventory updatedInventory = changeStatus(inventory, statuses);
         this.jpaInventoryRepository.save(inventory);
+        return sku;
     }
 
-    public void addStatus(String sku, SecondaryStatus statuses) {
+    public String addStatus(String sku, SecondaryStatus statuses) {
         Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
         Inventory inventory = inventories.get();
         ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
         statusArrayList.add(statuses);
         this.jpaInventoryRepository.save(inventory);
+        return sku;
     }
 
     private Inventory changeStatus(Inventory inventory, SecondaryStatus statuses) {
