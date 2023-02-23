@@ -56,7 +56,7 @@ public class InventoryService {
         return listOfGetResponses;
     }
 
-    public void updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus) throws InventoryNotFoundException {
+    public String updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus) throws InventoryNotFoundException {
         Inventory inventory = this.inventoryRepository.findInventory(sku);
          ArrayList<SecondaryStatus> inventorysecondaryStatus = inventory.getSecondaryStatus();
         for (SecondaryStatus statuses : secondaryStatus) {
@@ -65,10 +65,7 @@ public class InventoryService {
             } else if (inventorysecondaryStatus.contains(statuses)) {
                 this.inventoryRepository.updateStatus(sku, statuses);
             }
-
-
         }
-
-
+        return sku;
     }
 }
