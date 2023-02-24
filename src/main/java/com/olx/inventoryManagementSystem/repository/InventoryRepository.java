@@ -65,4 +65,10 @@ public class InventoryRepository {
         inventory.setSecondaryStatus(statusArrayList);
         return inventory;
     }
+
+//    public void updateInventory(Inventory inventoryPatched,String sku) {
+//        Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
+//        Inventory inventory = inventoryPatched;
+//        this.jpaInventoryRepository.save(inventory);
+//    }
 }

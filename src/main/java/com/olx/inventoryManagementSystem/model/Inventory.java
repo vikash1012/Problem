@@ -1,8 +1,14 @@
 package com.olx.inventoryManagementSystem.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -27,8 +33,12 @@ public class Inventory {
     private String type;
     private String status="created";
     private String location;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Column(name="created_at")
     private LocalDateTime createdAt;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
     @Column(name="created_by")
@@ -46,10 +56,10 @@ public class Inventory {
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;
 
+
     public Inventory(String sku, String type, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, Object attributes, float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
         this.sku = sku;
         this.type = type;
-
         this.location = location;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
