@@ -14,7 +14,6 @@ import java.util.ArrayList;
 @Table
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Getter
 @Setter
-@Data
 @EqualsAndHashCode
 public class InventoryRequest  {
     String type;

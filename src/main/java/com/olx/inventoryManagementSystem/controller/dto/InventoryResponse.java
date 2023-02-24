@@ -7,10 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @EqualsAndHashCode
-@NoArgsConstructor
 public class InventoryResponse {
     private String sku;
     private String type;
