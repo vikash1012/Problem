@@ -12,6 +12,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @Data
+@EqualsAndHashCode
 public class InventoryRequest  {
     String type;
     String location;

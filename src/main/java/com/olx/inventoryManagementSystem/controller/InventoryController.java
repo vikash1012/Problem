@@ -44,9 +44,8 @@ public class InventoryController {
     }
 
     @GetMapping("/inventories")
-    public List<InventoryResponse> getInventories(@PageableDefault(
-            page = 0, size = 10,
-            sort = "sku", direction = Sort.Direction.ASC) Pageable pageable) {
+    public List<InventoryResponse> getInventories(@PageableDefault (page = 0, size = 10, sort = "sku",
+            direction = Sort.Direction.ASC) Pageable pageable) {
         return this.inventoryService.getInventories(pageable);
     }
 
