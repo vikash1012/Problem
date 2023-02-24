@@ -7,7 +7,6 @@ import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InventoryRepositoryTest {
@@ -47,7 +46,7 @@ class InventoryRepositoryTest {
 
         String actualId = inventoryRepository.createInventory(inventory);
 
-        assertEquals(expectedId,actualId);
+        assertEquals(expectedId, actualId);
 
 
     }
@@ -62,29 +61,27 @@ class InventoryRepositoryTest {
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
         secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
         Inventory inventory = new Inventory("d59fdbd5-0c56-4a79-8905-6989601890bf", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus);
-        Inventory expected=inventory;
+        Inventory expected = inventory;
         when(jpaInventoryRepository.findById(sku)).thenReturn(Optional.of(inventory));
 
-        Inventory actual=inventoryRepository.findInventory(sku);
+        Inventory actual = inventoryRepository.findInventory(sku);
 
-        assertEquals(expected,actual);
-
+        assertEquals(expected, actual);
 
 
     }
 
     @Test
     void shouldReturnInventoryForInValidSku() throws InventoryNotFoundException {
+        InventoryRepository inventoryRepository1 = mock(InventoryRepository.class);
         String sku = "d59fdbd5-0c56-4a79-8905-6989601890be";
-        Optional<Inventory> inventory=Optional.empty();
+        Optional<Inventory> inventory = Optional.empty();
         when(jpaInventoryRepository.findById(sku)).thenReturn(inventory);
-        String expectedError="Inventory not found for sku - "+sku;
+        String expectedError = "Inventory not found for sku - " + sku;
 
-        InventoryNotFoundException actualError= Assertions.assertThrows(InventoryNotFoundException.class,()->inventoryRepository.findInventory(sku));
+        InventoryNotFoundException actualError = Assertions.assertThrows(InventoryNotFoundException.class, () -> inventoryRepository.findInventory(sku));
 
-        assertEquals(expectedError,actualError.getMessage());
-
-
+        assertEquals(expectedError, actualError.getMessage());
 
 
     }
@@ -95,7 +92,7 @@ class InventoryRepositoryTest {
 
     @Test
     void updateStatus() {
-    }
+         }
 
     @Test
     void addStatus() {

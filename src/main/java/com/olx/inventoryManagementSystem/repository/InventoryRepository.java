@@ -53,7 +53,7 @@ public class InventoryRepository {
         this.jpaInventoryRepository.save(inventory);
     }
 
-    private Inventory changeStatus(Inventory inventory, SecondaryStatus statuses) {
+    public Inventory changeStatus(Inventory inventory, SecondaryStatus statuses) {
         ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
         for (SecondaryStatus status : statusArrayList) {
             if (status.getName().equals(statuses.getName())) {
