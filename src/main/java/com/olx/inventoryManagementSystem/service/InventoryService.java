@@ -1,10 +1,10 @@
 package com.olx.inventoryManagementSystem.service;
 
-import aj.org.objectweb.asm.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.olx.inventoryManagementSystem.controller.dto.*;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTypeException;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
@@ -66,4 +66,17 @@ public class InventoryService {
         }
         return sku;
     }
+
+//    public void partialUpdateInventory(JsonPatch patch, String sku) throws InventoryNotFoundException, JsonPatchException, JsonProcessingException {
+//        Inventory inventory = inventoryRepository.findInventory(sku);
+//        Inventory inventoryPatched = applyPatchToInventory(patch, inventory);
+//        inventoryRepository.updateInventory(inventoryPatched,sku);
+//    }
+//
+//    private Inventory applyPatchToInventory(
+//            JsonPatch patch, Inventory inventory) throws JsonPatchException, JsonProcessingException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode patched = patch.apply(objectMapper.convertValue(inventory, JsonNode.class));
+//        return objectMapper.treeToValue(patched, Inventory.class);
+//    }
 }
