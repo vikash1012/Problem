@@ -1,5 +1,7 @@
 package com.olx.inventoryManagementSystem.utils;
 
+import com.olx.inventoryManagementSystem.exceptions.JwtInvalidException;
+import io.jsonwebtoken.Jwt;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,7 +15,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
     private final String SECRET_KEY = "InventoryManagementSystem@123";
-    private final long JWT_TOKEN_VALIDITY=1000 * 60 * 60 * 10;
+    private final long JWT_TOKEN_VALIDITY=1000 * 60;
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -32,6 +34,7 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
     private Boolean isTokenExpired(String token) {
+        System.out.println("token is expired");
         return extractExpiration(token).before(new Date());
     }
 
@@ -46,8 +49,12 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserDetails userDetails) throws JwtInvalidException {
         final String username = extractEmail(token);
+        if(isTokenExpired(token)){
+            System.out.println("is token expired");
+            throw new JwtInvalidException("Token Invalid");
+        }
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 

@@ -1,6 +1,7 @@
 package com.olx.inventoryManagementSystem.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olx.inventoryManagementSystem.exceptions.JwtInvalidException;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
+//        if(request.getMethod()=="GET"){
+//            filterChain.doFilter(request,response);
+//
+//        }
+//        else if(authorizationHeader==null){
+//            try {
+//                throw new Exception();
+//            } catch (Exception e) {
+//                throw new RuntimeException("Forbidden Request");
+//            }
+//        }
         String email = null;
         String jwt = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -37,11 +49,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.loginUserService.loadUserByUsername(email);
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+            try {
+                if (jwtUtil.validateToken(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+            } catch (JwtInvalidException e) {
+                throw new RuntimeException(e);
             }
+
         }
         filterChain.doFilter(request, response);
     }

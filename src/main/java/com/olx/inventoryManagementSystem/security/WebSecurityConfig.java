@@ -1,5 +1,6 @@
 package com.olx.inventoryManagementSystem.security;
 
+import com.olx.inventoryManagementSystem.exceptions.ExcepetionHandlerFilter;
 import com.olx.inventoryManagementSystem.filters.JwtRequestFilter;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     LoginUserService loginUserService;
     @Autowired
     JwtRequestFilter jwtRequestFilter;
+    @Autowired
+    ExcepetionHandlerFilter excepetionHandlerFilter;
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(loginUserService);
     }
@@ -38,7 +41,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtRequestFilter,UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(excepetionHandlerFilter,UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(jwtRequestFilter,ExcepetionHandlerFilter.class);
 
     }
 

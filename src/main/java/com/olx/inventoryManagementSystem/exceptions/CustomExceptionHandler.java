@@ -1,11 +1,14 @@
 package com.olx.inventoryManagementSystem.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 @NoArgsConstructor
@@ -34,4 +37,5 @@ public class CustomExceptionHandler {
         final ExceptionResponse exceptionResponse = new ExceptionResponse("InvalidUser", ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
 }
