@@ -28,11 +28,11 @@ public class InventoryRepository {
     }
 
     public Inventory findInventory(String sku) throws InventoryNotFoundException {
-        Optional<Inventory> optionalCar = this.jpaInventoryRepository.findById(sku);
-        if (optionalCar.isEmpty()) {
+        Optional<Inventory> optionalInventory = this.jpaInventoryRepository.findById(sku);
+        if (optionalInventory.isEmpty()) {
             throw new InventoryNotFoundException("Inventory not found for sku - " + sku);
         }
-        return optionalCar.get();
+        return optionalInventory.get();
     }
 
     public Page<Inventory> fetchInventories(Pageable pageable) {
@@ -67,9 +67,7 @@ public class InventoryRepository {
         return inventory;
     }
 
-    public void updateInventory(Inventory inventoryPatched,String sku) {
-        Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
-        Inventory inventory = inventoryPatched;
+    public void updateInventory(Inventory inventory) {
         this.jpaInventoryRepository.save(inventory);
     }
 }

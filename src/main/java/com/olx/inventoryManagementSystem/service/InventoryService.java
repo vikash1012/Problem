@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -67,16 +69,33 @@ public class InventoryService {
         return sku;
     }
 
-    public void partialUpdateInventory(JsonPatch patch, String sku) throws InventoryNotFoundException, JsonPatchException, JsonProcessingException {
-        Inventory inventory = inventoryRepository.findInventory(sku);
-        Inventory inventoryPatched = applyPatchToInventory(patch, inventory);
-        inventoryRepository.updateInventory(inventoryPatched,sku);
-    }
+//    public void partialUpdateInventory(JsonPatch patch, String sku) throws InventoryNotFoundException, JsonPatchException, JsonProcessingException {
+//        Inventory inventory = inventoryRepository.findInventory(sku);
+//        Inventory inventoryPatched = applyPatchToInventory(patch, inventory);
+//        inventoryRepository.updateInventory(inventoryPatched,sku);
+//    }
 
-    private Inventory applyPatchToInventory(
-            JsonPatch patch, Inventory inventory) throws JsonPatchException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode patched = patch.apply(objectMapper.convertValue(inventory, JsonNode.class));
-        return objectMapper.treeToValue(patched, Inventory.class);
+//    private Inventory applyPatchToInventory(
+//            JsonPatch patch, Inventory inventory) throws JsonPatchException, JsonProcessingException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode patched = patch.apply(objectMapper.convertValue(inventory, JsonNode.class));
+//        return objectMapper.treeToValue(patched, Inventory.class);
+//    }
+
+    public String patchInventory(String sku, Map<String, JsonNode> field) throws InventoryNotFoundException{
+        Inventory inventory =  inventoryRepository.findInventory(sku);
+        JsonNode jsonnode = new ObjectMapper().createObjectNode();
+        field.forEach((key, value) -> {
+            Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
+            if (key == "attributes") {
+                for(JsonNode object:value){
+
+                }
+            }
+            foundField.setAccessible(true);
+            ReflectionUtils.setField(foundField, inventory, (Object) value);
+        });
+        inventoryRepository.updateInventory(inventory);
+        return sku;
     }
 }
