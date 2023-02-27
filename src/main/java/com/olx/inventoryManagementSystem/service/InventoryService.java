@@ -32,7 +32,8 @@ public class InventoryService {
     }
 
     private static void isAcceptablenventoryType(InventoryRequest inventoryRequest) throws InvalidTypeException {
-        if (!inventoryRequest.getType().equalsIgnoreCase("car") && !inventoryRequest.getType().equalsIgnoreCase("bike")) {
+        if (!inventoryRequest.getType().equalsIgnoreCase("car")
+                && !inventoryRequest.getType().equalsIgnoreCase("bike")) {
             throw new InvalidTypeException(inventoryRequest.getType() + " is not supported");
         }
     }
@@ -41,34 +42,44 @@ public class InventoryService {
         isAcceptablenventoryType(inventoryRequest);
         UUID sku = UUID.randomUUID();
         LocalDateTime localDateTime = LocalDateTime.now();
-        Inventory inventory = new Inventory(sku.toString(), inventoryRequest.getType(), inventoryRequest.getLocation(), localDateTime, localDateTime, "user", "user", (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(), inventoryRequest.getSecondaryStatus());
+        Inventory inventory = new Inventory(sku.toString(), inventoryRequest.getType(), inventoryRequest.getLocation(),
+                localDateTime, localDateTime, "user", "user",
+                (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
+                inventoryRequest.getSecondaryStatus());
         return this.inventoryRepository.createInventory(inventory);
     }
 
     public InventoryResponse getInventory(String InventorySku) throws InventoryNotFoundException {
         Inventory inventory = this.inventoryRepository.findInventory(InventorySku);
-        InventoryResponse inventoryResponse = new InventoryResponse(inventory.getSku(), inventory.getType(), inventory.getStatus(), inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(), inventory.getCreatedBy(), inventory.getUpdatedBy(), inventory.getAttributes(), inventory.getCostPrice(), inventory.getSecondaryStatus());
-        return inventoryResponse;
+        return new InventoryResponse(inventory.getSku(), inventory.getType(), inventory.getStatus(),
+                inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(), inventory.getCreatedBy(),
+                inventory.getUpdatedBy(), inventory.getAttributes(), inventory.getCostPrice(),
+                inventory.getSecondaryStatus());
     }
 
     public List<InventoryResponse> getInventories(Pageable pageable) {
         List<InventoryResponse> listOfGetResponses = new ArrayList<>();
         Page<Inventory> listOfInventories = this.inventoryRepository.fetchInventories(pageable);
         for (Inventory inventory : listOfInventories) {
-            InventoryResponse inventoryDetails = new InventoryResponse(inventory.getSku(), inventory.getType(), inventory.getStatus(), inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(), inventory.getCreatedBy(), inventory.getUpdatedBy(), inventory.getAttributes(), inventory.getCostPrice(), inventory.getSecondaryStatus());
+            InventoryResponse inventoryDetails = new InventoryResponse(inventory.getSku(), inventory.getType(),
+                    inventory.getStatus(), inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(),
+                    inventory.getCreatedBy(), inventory.getUpdatedBy(), inventory.getAttributes(),
+                    inventory.getCostPrice(), inventory.getSecondaryStatus());
             listOfGetResponses.add(inventoryDetails);
         }
         return listOfGetResponses;
     }
 
-    public String updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus) throws InventoryNotFoundException {
+    public String updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus)
+            throws InventoryNotFoundException {
         Inventory inventory = this.inventoryRepository.findInventory(sku);
         ArrayList<SecondaryStatus> inventorySecondaryStatus = inventory.getSecondaryStatus();
         updateSecondaryStatus(sku, secondaryStatus, inventorySecondaryStatus);
         return sku;
     }
 
-    private void updateSecondaryStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus, ArrayList<SecondaryStatus> inventorySecondaryStatus) {
+    private void updateSecondaryStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus,
+                                       ArrayList<SecondaryStatus> inventorySecondaryStatus) {
         for (SecondaryStatus statuses : secondaryStatus) {
             if (!inventorySecondaryStatus.contains(statuses)) {
                 this.inventoryRepository.addStatus(sku, statuses);
@@ -80,25 +91,31 @@ public class InventoryService {
 
     public String patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException {
         Inventory inventory = inventoryRepository.findInventory(sku);
-        ObjectMapper mapper = new ObjectMapper();
+        updateInventory(field, inventory);
+        inventoryRepository.updateInventory(inventory);
+        return sku;
+    }
+
+    private static void updateInventory(Map<String, Object> field, Inventory inventory) {
         field.forEach((key, value) -> {
             Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
             if (key.equals("attributes")) {
-                Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {
-                });
-                Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(), new TypeReference<Map<String, Object>>() {
-                });
-                valueMap.forEach((valueKey, valueValue) -> {
-                    prevValueMap.put(valueKey, valueValue);
-                });
-                foundField.setAccessible(true);
-                ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
+                updateAttributes(inventory, value, foundField);
             } else if (!key.equals("attributes")) {
                 foundField.setAccessible(true);
                 ReflectionUtils.setField(foundField, inventory, (Object) value);
             }
         });
-        inventoryRepository.updateInventory(inventory);
-        return sku;
+    }
+
+    private static void updateAttributes(Inventory inventory, Object value, Field foundField) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {
+        });
+        Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(),
+                new TypeReference<Map<String, Object>>() {});
+        prevValueMap.putAll(valueMap);
+        foundField.setAccessible(true);
+        ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
     }
 }

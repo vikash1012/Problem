@@ -26,12 +26,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     JwtRequestFilter jwtRequestFilter;
     @Autowired
     ExcepetionHandlerFilter excepetionHandlerFilter;
+
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(loginUserService);
     }
 
     protected void configure(HttpSecurity http) throws Exception {
-
         http
                 .csrf().disable()
                 .cors().disable()
@@ -41,8 +41,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(excepetionHandlerFilter,UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(jwtRequestFilter,ExcepetionHandlerFilter.class);
+        http.addFilterBefore(excepetionHandlerFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(jwtRequestFilter, ExcepetionHandlerFilter.class);
 
     }
 
@@ -53,7 +53,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 }

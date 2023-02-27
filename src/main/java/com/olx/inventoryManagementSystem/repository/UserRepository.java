@@ -3,7 +3,6 @@ package com.olx.inventoryManagementSystem.repository;
 
 import com.olx.inventoryManagementSystem.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,7 +19,6 @@ public class UserRepository {
     }
 
     public String createUser(User user) {
-
         User savedUser = this.jpaUserRepository.save(user);
         return "User Registered Successfully";
     }

@@ -35,20 +35,25 @@ public class LoginUserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(username + " not found.");
         }
-        return new  org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+                new ArrayList<>());
     }
 
-    public ResponseEntity<LoginResponse> createAuthenticationToken(UserRequest userRequest) throws InvalidLoginCredential {
+    public ResponseEntity<LoginResponse> createAuthenticationToken(UserRequest userRequest)
+            throws InvalidLoginCredential {
+        authenticateUser(userRequest);
+        UserDetails userDetails = loadUserByUsername(userRequest.getEmail());
+        String jwt = jwtUtil.generateToken(userDetails);
+        return new ResponseEntity<>(new LoginResponse(jwt), HttpStatus.CREATED);
+    }
+
+    private void authenticateUser(UserRequest userRequest) throws InvalidLoginCredential {
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userRequest.getEmail(), userRequest.getPassword())
-            );
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),
+                    userRequest.getPassword()));
         } catch (BadCredentialsException e) {
             throw new InvalidLoginCredential("Invalid Login Credential");
         }
-        UserDetails userDetails = loadUserByUsername(userRequest.getEmail());
-        String jwt = jwtUtil.generateToken(userDetails);
-        return new ResponseEntity(new LoginResponse(jwt), HttpStatus.CREATED);
     }
 
 }
