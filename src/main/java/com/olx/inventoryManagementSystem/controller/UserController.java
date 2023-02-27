@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     @Autowired
     UserService userService;
-
     @Autowired
     private LoginUserService loginUserService;
-
 
     @PostMapping("/users/register")
     public ResponseEntity<RegistrationResponse> createUser(@RequestBody UserRequest userRequest) {
@@ -28,7 +26,6 @@ public class UserController {
 
     @PostMapping("/users/login")
     public ResponseEntity<LoginResponse> createAuthenticationToken(@RequestBody UserRequest userRequest) throws InvalidLoginCredential {
-
         return this.loginUserService.createAuthenticationToken(userRequest);
 
 
