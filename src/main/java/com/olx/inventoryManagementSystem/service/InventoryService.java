@@ -1,6 +1,5 @@
 package com.olx.inventoryManagementSystem.service;
 
-import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,7 +12,6 @@ import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
 import com.olx.inventoryManagementSystem.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -72,41 +70,25 @@ public class InventoryService {
         return sku;
     }
 
-//    public void partialUpdateInventory(JsonPatch patch, String sku) throws InventoryNotFoundException, JsonPatchException, JsonProcessingException {
-//        Inventory inventory = inventoryRepository.findInventory(sku);
-//        Inventory inventoryPatched = applyPatchToInventory(patch, inventory);
-//        inventoryRepository.updateInventory(inventoryPatched,sku);
-//    }
-
-//    private Inventory applyPatchToInventory(
-//            JsonPatch patch, Inventory inventory) throws JsonPatchException, JsonProcessingException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        JsonNode patched = patch.apply(objectMapper.convertValue(inventory, JsonNode.class));
-//        return objectMapper.treeToValue(patched, Inventory.class);
-//    }
-
     public String patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException{
         Inventory inventory =  inventoryRepository.findInventory(sku);
+        //JsonNode jsonnode = new ObjectMapper().createObjectNode();
         ObjectMapper mapper = new ObjectMapper();
         field.forEach((key, value) -> {
             Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
-
-//            if (key.equals("attributes")) {
-//                Map<String,Object> valueMap= mapper.convertValue(value, new TypeReference<Map<String, Object>>(){});
-//                Map<String,Object> previous=mapper.convertValue((JsonNode)inventory.getAttributes(), new TypeReference<Map<String, Object>>(){});
-//                valueMap.forEach((valueKey, value1)->{
-//                        previous.put(valueKey,value1);
-//                });
-//
-//                JsonNode updated = mapper.valueToTree(previous);
-//                inventory.setAttributes((Object)updated );
-//
-//
-//            }
-//            else if(!key.equals("attributes")) {
+            if (key.equals("attributes")) {
+                Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>(){});
+                Map<String,Object> prevValueMap = mapper.convertValue(inventory.getAttributes(), new TypeReference<Map<String, Object>>(){});
+                valueMap.forEach((valueKey, valueValue)->{
+                    prevValueMap.put(valueKey,valueValue);
+                });
+                foundField.setAccessible(true);
+                ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
+            }
+            else if(!key.equals("attributes")) {
                 foundField.setAccessible(true);
                 ReflectionUtils.setField(foundField, inventory, (Object) value);
-//            }
+            }
         });
         inventoryRepository.updateInventory(inventory);
         return sku;
