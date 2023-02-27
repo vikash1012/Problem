@@ -22,19 +22,18 @@ public class ExcepetionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         }  catch (RuntimeException e) {
+            ExceptionResponse errorResponse=new ExceptionResponse();
+                if(e.getMessage().equals("Forbidden Request")){
+                     errorResponse = new ExceptionResponse("Forbidden", e.getMessage());
 
-            // custom error response class used across my project
-            if (e.getMessage().equals("Forbidden Request")) {
-                ExceptionResponse errorResponse = new ExceptionResponse("Forbidden", e.getMessage());
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-            } else {
-                ExceptionResponse errorResponse = new ExceptionResponse("Token InValid", e.getMessage());
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-            }
+                }
+                else if(e.getMessage().equals("Token Invalid")) {
+                    errorResponse = new ExceptionResponse("Token InValid", e.getMessage());
+                    }
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+
         }
-
 
         }
     }

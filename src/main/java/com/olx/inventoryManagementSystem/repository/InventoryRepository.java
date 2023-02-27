@@ -67,9 +67,9 @@ public class InventoryRepository {
         return inventory;
     }
 
-//    public void updateInventory(Inventory inventoryPatched,String sku) {
-//        Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
-//        Inventory inventory = inventoryPatched;
-//        this.jpaInventoryRepository.save(inventory);
-//    }
+    public void updateInventory(Inventory inventoryPatched,String sku) {
+        Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
+        Inventory inventory = inventoryPatched;
+        this.jpaInventoryRepository.save(inventory);
+    }
 }

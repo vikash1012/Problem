@@ -67,16 +67,16 @@ public class InventoryService {
         return sku;
     }
 
-//    public void partialUpdateInventory(JsonPatch patch, String sku) throws InventoryNotFoundException, JsonPatchException, JsonProcessingException {
-//        Inventory inventory = inventoryRepository.findInventory(sku);
-//        Inventory inventoryPatched = applyPatchToInventory(patch, inventory);
-//        inventoryRepository.updateInventory(inventoryPatched,sku);
-//    }
-//
-//    private Inventory applyPatchToInventory(
-//            JsonPatch patch, Inventory inventory) throws JsonPatchException, JsonProcessingException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        JsonNode patched = patch.apply(objectMapper.convertValue(inventory, JsonNode.class));
-//        return objectMapper.treeToValue(patched, Inventory.class);
-//    }
+    public void partialUpdateInventory(JsonPatch patch, String sku) throws InventoryNotFoundException, JsonPatchException, JsonProcessingException {
+        Inventory inventory = inventoryRepository.findInventory(sku);
+        Inventory inventoryPatched = applyPatchToInventory(patch, inventory);
+        inventoryRepository.updateInventory(inventoryPatched,sku);
+    }
+
+    private Inventory applyPatchToInventory(
+            JsonPatch patch, Inventory inventory) throws JsonPatchException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode patched = patch.apply(objectMapper.convertValue(inventory, JsonNode.class));
+        return objectMapper.treeToValue(patched, Inventory.class);
+    }
 }
