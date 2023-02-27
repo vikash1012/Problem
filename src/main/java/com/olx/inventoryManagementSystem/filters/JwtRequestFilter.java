@@ -27,42 +27,57 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private LoginUserService loginUserService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
         String email = null;
         String jwt = null;
-
-        if(authorizationHeader==null&&IspermitForALl(request)){
-            filterChain.doFilter(request,response);
-            return;
-        }
-        else if(authorizationHeader==null){
-            throw new RuntimeException("Forbidden Request");
-        }
-
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            try {
-                email = jwtUtil.extractEmail(jwt);
-            }catch(RuntimeException e){
-                throw new RuntimeException("Token Invalid");
-            }
-        }
-
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.loginUserService.loadUserByUsername(email);
-                if (jwtUtil.validateToken(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
-
-        }
+        if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
+        jwt = authorizationHeader.substring(7);
+        email = getEmail(authorizationHeader, email, jwt);
+        validateToken(request, email, jwt);
         filterChain.doFilter(request, response);
     }
 
-    private boolean IspermitForALl(HttpServletRequest request) {
-        return request.getMethod().equals("GET")||request.getRequestURI().equals("/users/login")||request.getRequestURI().equals("/users/register");
+    private void validateToken(HttpServletRequest request, String email, String jwt) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.loginUserService.loadUserByUsername(email);
+            if (jwtUtil.validateToken(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            }
+        }
+    }
+
+    private String getEmail(String authorizationHeader, String email, String jwt) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                email = jwtUtil.extractEmail(jwt);
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Token Invalid");
+            }
+        }
+        return email;
+    }
+
+    private boolean isRequestPermittedWithNoAuthorizationHeader(
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader == null && IsPermitted(request)) {
+            filterChain.doFilter(request, response);
+            return true;
+        } else if (authorizationHeader == null) {
+            throw new RuntimeException("Forbidden Request");
+        }
+        return false;
+    }
+
+    private boolean IsPermitted(HttpServletRequest request) {
+        return request.getMethod().equals("GET") || request.getRequestURI().equals("/users/login")
+                || request.getRequestURI().equals("/users/register");
     }
 }
 
