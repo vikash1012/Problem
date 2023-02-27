@@ -68,7 +68,7 @@ public class InventoryController {
     @PatchMapping(value = "/inventories/{sku}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void partialUpdateInventory(
-            @RequestBody Map<String, JsonNode> value,
+            @RequestBody Map<String, Object> value,
             @PathVariable("sku") String sku) throws InventoryNotFoundException {
         this.inventoryService.patchInventory(sku, value);
     }

@@ -1,6 +1,8 @@
 package com.olx.inventoryManagementSystem.service;
 
+import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -11,6 +13,7 @@ import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
 import com.olx.inventoryManagementSystem.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -82,18 +85,28 @@ public class InventoryService {
 //        return objectMapper.treeToValue(patched, Inventory.class);
 //    }
 
-    public String patchInventory(String sku, Map<String, JsonNode> field) throws InventoryNotFoundException{
+    public String patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException{
         Inventory inventory =  inventoryRepository.findInventory(sku);
-        JsonNode jsonnode = new ObjectMapper().createObjectNode();
+        ObjectMapper mapper = new ObjectMapper();
         field.forEach((key, value) -> {
             Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
-            if (key == "attributes") {
-                for(JsonNode object:value){
 
-                }
-            }
-            foundField.setAccessible(true);
-            ReflectionUtils.setField(foundField, inventory, (Object) value);
+//            if (key.equals("attributes")) {
+//                Map<String,Object> valueMap= mapper.convertValue(value, new TypeReference<Map<String, Object>>(){});
+//                Map<String,Object> previous=mapper.convertValue((JsonNode)inventory.getAttributes(), new TypeReference<Map<String, Object>>(){});
+//                valueMap.forEach((valueKey, value1)->{
+//                        previous.put(valueKey,value1);
+//                });
+//
+//                JsonNode updated = mapper.valueToTree(previous);
+//                inventory.setAttributes((Object)updated );
+//
+//
+//            }
+//            else if(!key.equals("attributes")) {
+                foundField.setAccessible(true);
+                ReflectionUtils.setField(foundField, inventory, (Object) value);
+//            }
         });
         inventoryRepository.updateInventory(inventory);
         return sku;
