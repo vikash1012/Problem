@@ -8,8 +8,11 @@ import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTypeException;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
+import com.olx.inventoryManagementSystem.filters.JwtRequestFilter;
 import com.olx.inventoryManagementSystem.model.Inventory;
+import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import com.olx.inventoryManagementSystem.service.InventoryService;
+import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class InventoryControllerTest {
     @MockBean
     InventoryService inventoryService;
-
     @Autowired
     private MockMvc mockMvc;
 

@@ -3,6 +3,7 @@ package com.olx.inventoryManagementSystem.repository;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Repository
-
+@NoArgsConstructor
 public class InventoryRepository {
     JPAInventoryRepository jpaInventoryRepository;
 
