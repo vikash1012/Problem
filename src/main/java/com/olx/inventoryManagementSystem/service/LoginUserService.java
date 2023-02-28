@@ -29,6 +29,17 @@ public class LoginUserService implements UserDetailsService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired(required = false)
+    public LoginUserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired(required = false)
+    public LoginUserService(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.userExistByEmail(username);

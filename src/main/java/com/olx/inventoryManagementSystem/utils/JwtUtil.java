@@ -1,5 +1,7 @@
 package com.olx.inventoryManagementSystem.utils;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +13,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
+@Component
 public class JwtUtil {
     private final String SECRET_KEY = "InventoryManagementSystem@123";
     private final long JWT_TOKEN_VALIDITY=1000 * 60 * 60 * 5;

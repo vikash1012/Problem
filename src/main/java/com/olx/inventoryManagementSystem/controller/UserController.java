@@ -4,6 +4,7 @@ import com.olx.inventoryManagementSystem.controller.dto.LoginResponse;
 import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
 import com.olx.inventoryManagementSystem.exceptions.InvalidLoginCredential;
+import com.olx.inventoryManagementSystem.service.InventoryService;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,16 @@ public class UserController {
     @Autowired
     private LoginUserService loginUserService;
 
+    @Autowired(required = false)
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired(required = false)
+    public UserController(LoginUserService loginUserService) {
+        this.loginUserService = loginUserService;
+    }
+
     @PostMapping("/users/register")
     public ResponseEntity<RegistrationResponse> createUser(@RequestBody UserRequest userRequest) {
         return userService.createUser(userRequest);
@@ -27,7 +38,5 @@ public class UserController {
     @PostMapping("/users/login")
     public ResponseEntity<LoginResponse> createAuthenticationToken(@RequestBody UserRequest userRequest) throws InvalidLoginCredential {
         return this.loginUserService.createAuthenticationToken(userRequest);
-
-
     }
 }

@@ -56,6 +56,20 @@ public class Inventory {
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;
 
+    public Inventory(String sku, String type, String status, String location, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, Object attributes, float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
+        this.sku = sku;
+        this.type = type;
+        this.status = status;
+        this.location = location;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.attributes = attributes;
+        this.costPrice = costPrice;
+        this.secondaryStatus = secondaryStatus;
+    }
+
     public Inventory(String sku, String type, String location, LocalDateTime createdAt,
                      LocalDateTime updatedAt, String createdBy, String updatedBy, Object attributes, float costPrice,
                      ArrayList<SecondaryStatus> secondaryStatus) {

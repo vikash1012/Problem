@@ -67,7 +67,8 @@ public class InventoryRepository {
         return inventory;
     }
 
-    public void updateInventory(Inventory inventory) {
+    public String updateInventory(Inventory inventory) {
         this.jpaInventoryRepository.save(inventory);
+        return inventory.getSku();
     }
 }

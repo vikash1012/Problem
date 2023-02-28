@@ -131,4 +131,22 @@ class InventoryRepositoryTest {
 
         assertEquals(expectedSku,actualSku);
     }
+
+    @Test
+    void ShouldReturnSkuFromDB() {
+        JsonNode attributes = new ObjectMapper().createObjectNode();
+        ((ObjectNode) attributes).put("vin", "AP31CM9873");
+        ((ObjectNode) attributes).put("make", "Tata");
+        ((ObjectNode) attributes).put("model", "Nexon");
+        ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
+        secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
+        Inventory inventory = new Inventory("d59fdbd5-0c56-4a79-8905-6989601890be", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus);
+        String expectedId = "d59fdbd5-0c56-4a79-8905-6989601890be";
+        when(jpaInventoryRepository.save(inventory)).thenReturn(inventory);
+
+        String actualId = inventoryRepository.updateInventory(inventory);
+
+        assertEquals(expectedId,actualId);
+    }
 }
