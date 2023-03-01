@@ -1,20 +1,11 @@
 package com.olx.inventoryManagementSystem.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.olx.inventoryManagementSystem.model.User;
-import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
-import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,8 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -39,18 +28,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private LoginUserService loginUserService;
     @Autowired
-    private JPAUserRepository jPAUserRepository;
-    @Autowired
     UserRepository userRepository;
-    @Autowired
-    WebSecurityConfig webSecurityConfig;
 
     @Autowired(required = false)
-    public JwtRequestFilter(@Lazy UserRepository userRepository,LoginUserService loginUserService, JwtUtil jwtUtil) {
+    public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.loginUserService = loginUserService;
         this.jwtUtil = jwtUtil;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

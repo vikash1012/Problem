@@ -44,14 +44,14 @@ class UserControllerTest {
     LoginUserService loginUserService;
     @MockBean
     JwtUtil jwtUtilBean;
-//    @MockBean
-//    LoginUserService loginUserServiceBean;
+
     @MockBean
     UserRepository userRepositoryBean;
     @MockBean
     JPAUserRepository jpaUserRepositoryBean;
     @Autowired
     private MockMvc mockMvc;
+
     @BeforeEach
     public void init() {
         UserController userController = new UserController(userService);
@@ -65,7 +65,7 @@ class UserControllerTest {
 
     @Test
     void ShouldReturnRegistrationResponse() throws Exception {
-        UserRequest userRequest = new UserRequest("parimalvarma@gmail.com","vparimal587");
+        UserRequest userRequest = new UserRequest("parimalvarma@gmail.com", "vparimal587");
         RegistrationResponse registrationResponse = new RegistrationResponse("User Registered Successfully");
         when(userService.createUser(userRequest)).thenReturn(new ResponseEntity<>(registrationResponse, HttpStatus.CREATED));
 

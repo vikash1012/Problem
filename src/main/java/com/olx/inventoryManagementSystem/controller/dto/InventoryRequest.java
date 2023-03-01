@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class InventoryRequest  {
+public class InventoryRequest {
     String type;
     String location;
     JsonNode attributes;

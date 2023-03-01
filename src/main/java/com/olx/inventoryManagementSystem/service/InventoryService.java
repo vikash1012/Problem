@@ -110,8 +110,7 @@ public class InventoryService {
 
     private static void updateAttributes(Inventory inventory, Object value, Field foundField) {
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {
-        });
+        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {});
         Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(),
                 new TypeReference<Map<String, Object>>() {});
         prevValueMap.putAll(valueMap);

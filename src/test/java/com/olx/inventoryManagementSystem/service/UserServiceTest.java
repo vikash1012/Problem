@@ -40,39 +40,36 @@ class UserServiceTest {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance() ;
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @BeforeEach
     void setup() {
-        userService = new UserService(userRepository,webSecurityConfig);
+        userService = new UserService(userRepository, webSecurityConfig);
     }
 
     @Test
-    public void ShouldReturnRegistrationResponseWhenUserIsAlreadyPresent(){
-        User user = new User("parimalvarma@gmail.com","vparimal587");
+    public void ShouldReturnRegistrationResponseWhenUserIsAlreadyPresent() {
+        User user = new User("parimalvarma@gmail.com", "vparimal587");
         when(userRepository.userExistByEmail("parimalvarma@gmail.com")).thenReturn(user);
         ResponseEntity<RegistrationResponse> expectedResponse = new ResponseEntity<>(new RegistrationResponse("User already exists"), HttpStatus.CONFLICT);
 
-        ResponseEntity<RegistrationResponse> actualResponse = userService.createUser(new UserRequest("parimalvarma@gmail.com","vparimal587"));
+        ResponseEntity<RegistrationResponse> actualResponse = userService.createUser(new UserRequest("parimalvarma@gmail.com", "vparimal587"));
 
-        assertEquals(expectedResponse,actualResponse);
+        assertEquals(expectedResponse, actualResponse);
     }
 
     @Test
-    public void ShouldReturnRegistrationResponseWhenUserIsCreated(){
+    public void ShouldReturnRegistrationResponseWhenUserIsCreated() {
         PasswordEncoder passwordEncoder = null;
-        UserRequest userRequest = new UserRequest("parimalvarma@gmail.com","vparimal587");
+        UserRequest userRequest = new UserRequest("parimalvarma@gmail.com", "vparimal587");
         when(userRepository.userExistByEmail("parimalvarma@gmail.com")).thenReturn(null);
         when(webSecurityConfig.passwordEncoder()).thenReturn(new BCryptPasswordEncoder());
         when(userRepository.createUser(any())).thenReturn("User Registered Successfully");
         ResponseEntity<RegistrationResponse> expectedResponse = new ResponseEntity(new RegistrationResponse("User Registered Successfully"), HttpStatus.CREATED);
 
-        ResponseEntity<RegistrationResponse> actualResponse = userService.createUser(new UserRequest("parimalvarma@gmail.com","vparimal587"));
+        ResponseEntity<RegistrationResponse> actualResponse = userService.createUser(new UserRequest("parimalvarma@gmail.com", "vparimal587"));
 
-        assertEquals(expectedResponse,actualResponse);
+        assertEquals(expectedResponse, actualResponse);
     }
-
-
-
 }

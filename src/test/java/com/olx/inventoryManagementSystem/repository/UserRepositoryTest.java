@@ -33,23 +33,23 @@ class UserRepositoryTest {
     @Test
     void ShouldReturnUserWhenEmailIsGiven() {
         String email = "user@email.com";
-        User expectedUser = new User("user@email.com","124");
+        User expectedUser = new User("user@email.com", "124");
         when(jpaUserRepository.findByEmail(email)).thenReturn(expectedUser);
 
         User actualUser = userRepository.userExistByEmail(email);
 
-        assertEquals(expectedUser,actualUser);
+        assertEquals(expectedUser, actualUser);
     }
 
     @Test
     void ShouldReturnStringWhenUserIsCreated() {
         String expected = "User Registered Successfully";
-        User user = new User("user@email.com","124");
+        User user = new User("user@email.com", "124");
         when(jpaUserRepository.save(user)).thenReturn(null);
 
         String actual = userRepository.createUser(user);
 
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
 }

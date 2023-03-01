@@ -3,13 +3,11 @@ package com.olx.inventoryManagementSystem.service;
 import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
 import com.olx.inventoryManagementSystem.model.User;
-import com.olx.inventoryManagementSystem.repository.InventoryRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,16 +16,10 @@ public class UserService {
     WebSecurityConfig webSecurityConfig;
 
     @Autowired(required = false)
-    public UserService(UserRepository userRepository,WebSecurityConfig webSecurityConfig) {
+    public UserService(UserRepository userRepository, WebSecurityConfig webSecurityConfig) {
         this.userRepository = userRepository;
         this.webSecurityConfig = webSecurityConfig;
     }
-
-//    @Autowired(required = false)
-//    public UserService(UserRepository userRepository, WebSecurityConfig webSecurityEncoder) {
-//        this.userRepository = userRepository;
-//        this.webSecurityConfig = webSecurityEncoder;
-//    }
 
     public ResponseEntity<RegistrationResponse> createUser(UserRequest userRequest) {
         if (userRepository.userExistByEmail(userRequest.getEmail()) != null) {

@@ -48,7 +48,7 @@ class InventoryRepositoryTest {
 
         String actualId = inventoryRepository.createInventory(inventory);
 
-        assertEquals(expectedId,actualId);
+        assertEquals(expectedId, actualId);
     }
 
     @Test
@@ -61,24 +61,24 @@ class InventoryRepositoryTest {
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
         secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
         Inventory inventory = new Inventory("d59fdbd5-0c56-4a79-8905-6989601890bf", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus);
-        Inventory expected=inventory;
+        Inventory expected = inventory;
         when(jpaInventoryRepository.findById(sku)).thenReturn(Optional.of(inventory));
 
-        Inventory actual=inventoryRepository.findInventory(sku);
+        Inventory actual = inventoryRepository.findInventory(sku);
 
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     void ShouldReturnExceptionForInValidSku() throws InventoryNotFoundException {
         String sku = "d59fdbd5-0c56-4a79-8905-6989601890be";
-        Optional<Inventory> inventory=Optional.empty();
+        Optional<Inventory> inventory = Optional.empty();
         when(jpaInventoryRepository.findById(sku)).thenReturn(inventory);
-        String expectedError="Inventory not found for sku - "+sku;
+        String expectedError = "Inventory not found for sku - " + sku;
 
-        InventoryNotFoundException actualError= Assertions.assertThrows(InventoryNotFoundException.class,()->inventoryRepository.findInventory(sku));
+        InventoryNotFoundException actualError = Assertions.assertThrows(InventoryNotFoundException.class, () -> inventoryRepository.findInventory(sku));
 
-        assertEquals(expectedError,actualError.getMessage());
+        assertEquals(expectedError, actualError.getMessage());
     }
 
     @Test
@@ -95,7 +95,7 @@ class InventoryRepositoryTest {
 
         Page<Inventory> actualInventories = inventoryRepository.fetchInventories(pageable);
 
-        assertEquals(expectedInventories,actualInventories);
+        assertEquals(expectedInventories, actualInventories);
     }
 
     @Test
@@ -110,9 +110,9 @@ class InventoryRepositoryTest {
         Inventory inventory = new Inventory("d59fdbd5-0c56-4a79-8905-6989601890bf", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus);
         when(jpaInventoryRepository.findById("d59fdbd5-0c56-4a79-8905-6989601890bf")).thenReturn(Optional.of(inventory));
 
-        String actualSku = inventoryRepository.updateStatus("d59fdbd5-0c56-4a79-8905-6989601890bf", new SecondaryStatus("warehouse","working"));
+        String actualSku = inventoryRepository.updateStatus("d59fdbd5-0c56-4a79-8905-6989601890bf", new SecondaryStatus("warehouse", "working"));
 
-        assertEquals(expectedSku,actualSku);
+        assertEquals(expectedSku, actualSku);
     }
 
     @Test
@@ -127,9 +127,9 @@ class InventoryRepositoryTest {
         Inventory inventory = new Inventory("d59fdbd5-0c56-4a79-8905-6989601890bf", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus);
         when(jpaInventoryRepository.findById("d59fdbd5-0c56-4a79-8905-6989601890bf")).thenReturn(Optional.of(inventory));
 
-        String actualSku = inventoryRepository.addStatus("d59fdbd5-0c56-4a79-8905-6989601890bf",new SecondaryStatus("legal","in-progress"));
+        String actualSku = inventoryRepository.addStatus("d59fdbd5-0c56-4a79-8905-6989601890bf", new SecondaryStatus("legal", "in-progress"));
 
-        assertEquals(expectedSku,actualSku);
+        assertEquals(expectedSku, actualSku);
     }
 
     @Test
@@ -147,6 +147,6 @@ class InventoryRepositoryTest {
 
         String actualId = inventoryRepository.updateInventory(inventory);
 
-        assertEquals(expectedId,actualId);
+        assertEquals(expectedId, actualId);
     }
 }

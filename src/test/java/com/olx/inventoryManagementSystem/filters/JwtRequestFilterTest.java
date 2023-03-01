@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
 class JwtRequestFilterTest {
@@ -41,7 +42,7 @@ class JwtRequestFilterTest {
     @Mock
     UserRepository userRepository = new UserRepository(jpaUserRepository);
     @Mock
-    JwtUtil jwtUtil=new JwtUtil();
+    JwtUtil jwtUtil = new JwtUtil();
     @Mock
     WebSecurityConfig webSecurityConfig;
     @Mock
@@ -54,21 +55,20 @@ class JwtRequestFilterTest {
     @BeforeEach
     void setUp() {
         jwtUtil = new JwtUtil();
-        jwtRequestFilter = new JwtRequestFilter(userRepository,loginUserService,jwtUtil);
-//        loginUserService = new LoginUserService(userRepository,webSecurityConfig,jwtUtil);
+        jwtRequestFilter = new JwtRequestFilter(userRepository, loginUserService, jwtUtil);
         dummy = new org.springframework.security.core.userdetails.User("user@email.com", "vparimal587", new ArrayList<>());
         jwtToken = jwtUtil.generateToken(dummy);
     }
 
     @Test
-    void WhenAuhorizationHeaderIsPresent() throws ServletException, IOException {
+    void WhenAuthorizationHeaderIsPresent() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
         request.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95A");
         when(loginUserService.loadUserByUsername("user@email.com")).thenReturn(dummy);
 
-        jwtRequestFilter.doFilterInternal(request,response,filterChain);
+        jwtRequestFilter.doFilterInternal(request, response, filterChain);
     }
 
     @Test
@@ -79,9 +79,9 @@ class JwtRequestFilterTest {
         request.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95");
         String expectedException = "Token Invalid";
 
-        RuntimeException actualException= Assertions.assertThrows(RuntimeException.class, ()->jwtRequestFilter.doFilterInternal(request,response,filterChain));
+        RuntimeException actualException = Assertions.assertThrows(RuntimeException.class, () -> jwtRequestFilter.doFilterInternal(request, response, filterChain));
 
-        assertEquals(expectedException,actualException.getMessage());
+        assertEquals(expectedException, actualException.getMessage());
     }
 
     @Test
@@ -91,7 +91,7 @@ class JwtRequestFilterTest {
         MockFilterChain filterChain = new MockFilterChain();
         request.setMethod("GET");
 
-        jwtRequestFilter.doFilterInternal(request,response,filterChain);
+        jwtRequestFilter.doFilterInternal(request, response, filterChain);
     }
 
     @Test
@@ -100,11 +100,10 @@ class JwtRequestFilterTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
         request.setMethod("POST");
-        //when(loginUserService.loadUserByUsername("user@email.com")).thenReturn(dummy);
         String expectedException = "Forbidden Request";
 
-        RuntimeException actualException= Assertions.assertThrows(RuntimeException.class, ()->jwtRequestFilter.doFilterInternal(request,response,filterChain));
+        RuntimeException actualException = Assertions.assertThrows(RuntimeException.class, () -> jwtRequestFilter.doFilterInternal(request, response, filterChain));
 
-        assertEquals(expectedException,actualException.getMessage());
+        assertEquals(expectedException, actualException.getMessage());
     }
 }

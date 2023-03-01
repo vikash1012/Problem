@@ -42,22 +42,23 @@ class InventoryServiceTest {
     }
 
     @Test
-    void ShouldReturnInventorySku() throws Exception{
+    void ShouldReturnInventorySku() throws Exception {
         String expectedInventorySku = "d59fdbd5-0c56-4a79-8905-6989601890be";
         JsonNode attributes = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributes).put("vin", "AP31CM9873");
         ((ObjectNode) attributes).put("make", "Tata");
         ((ObjectNode) attributes).put("model", "Nexon");
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
-        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
-        InventoryRequest inventoryRequest = new InventoryRequest("bike","mumbai",attributes,450000,secondaryStatus);
+        secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
+        InventoryRequest inventoryRequest = new InventoryRequest("bike", "mumbai", attributes, 450000, secondaryStatus);
         when(inventoryRepository.createInventory(any())).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
 
         String actualInventorySku = inventoryService.createInventory(inventoryRequest);
 
         assertEquals(expectedInventorySku, actualInventorySku);
     }
+
     @Test
     void ShouldThrowInvalidTypeException() throws InvalidTypeException {
         JsonNode attributes = new ObjectMapper().createObjectNode();
@@ -65,13 +66,14 @@ class InventoryServiceTest {
         ((ObjectNode) attributes).put("make", "Tata");
         ((ObjectNode) attributes).put("model", "Nexon");
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
-        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
-        InventoryRequest inventoryRequest = new InventoryRequest("mobile","mumbai",attributes,450000,secondaryStatus);
-        String expected="mobile is not supported";
+        secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
+        InventoryRequest inventoryRequest = new InventoryRequest("mobile", "mumbai", attributes, 450000, secondaryStatus);
+        String expected = "mobile is not supported";
 
-        Exception actualError= Assertions.assertThrows(Exception.class, ()->inventoryService.createInventory(inventoryRequest));
-        assertEquals(expected,actualError.getMessage());
+        Exception actualError = Assertions.assertThrows(Exception.class, () -> inventoryService.createInventory(inventoryRequest));
+
+        assertEquals(expected, actualError.getMessage());
     }
 
     @Test
@@ -81,8 +83,8 @@ class InventoryServiceTest {
         ((ObjectNode) attributes).put("make", "Tata");
         ((ObjectNode) attributes).put("model", "Nexon");
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
-        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
+        secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
         List<InventoryResponse> expectedInventories = List.of(new InventoryResponse("d59fdbd5-0c56-4a79-8905-6989601890be", "car", "created", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus));
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku")));
         Page<Inventory> fetchedInventories = new PageImpl<>(List.of(new Inventory("d59fdbd5-0c56-4a79-8905-6989601890be", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus)));
@@ -112,64 +114,64 @@ class InventoryServiceTest {
     }
 
     @Test
-    void ShouldReturnSkuAndUpdateStatus() throws Exception{
+    void ShouldReturnSkuAndUpdateStatus() throws Exception {
         JsonNode attributes = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributes).put("vin", "AP31CM9873");
         ((ObjectNode) attributes).put("make", "Tata");
         ((ObjectNode) attributes).put("model", "Nexon");
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
-        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
+        secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
         String expectedSku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         when(inventoryRepository.findInventory("09d6afa5-c898-44a1-bddb-d40a4feeee81")).thenReturn(new Inventory("09d6afa5-c898-44a1-bddb-d40a4feeee81", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus));
-        when(inventoryRepository.updateStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81",new SecondaryStatus("warehouse","completed"))).thenReturn("09d6afa5-c898-44a1-bddb-d40a4feeee81");
+        when(inventoryRepository.updateStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81", new SecondaryStatus("warehouse", "completed"))).thenReturn("09d6afa5-c898-44a1-bddb-d40a4feeee81");
 
-        String actualSku = inventoryService.updateStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81",secondaryStatus);
+        String actualSku = inventoryService.updateStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81", secondaryStatus);
 
         assertEquals(expectedSku, actualSku);
     }
 
     @Test
-    void ShouldReturnSkuAndAddStatus() throws Exception{
+    void ShouldReturnSkuAndAddStatus() throws Exception {
         JsonNode attributes = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributes).put("vin", "AP31CM9873");
         ((ObjectNode) attributes).put("make", "Tata");
         ((ObjectNode) attributes).put("model", "Nexon");
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
-        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
+        secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
         ArrayList<SecondaryStatus> secondaryStatuses = new ArrayList<>();
-        secondaryStatuses.add(new SecondaryStatus("legal","in-progress"));
+        secondaryStatuses.add(new SecondaryStatus("legal", "in-progress"));
         String expectedSku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         when(inventoryRepository.findInventory("09d6afa5-c898-44a1-bddb-d40a4feeee81")).thenReturn(new Inventory("09d6afa5-c898-44a1-bddb-d40a4feeee81", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus));
-        when(inventoryRepository.addStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81",new SecondaryStatus("legal","in-progress"))).thenReturn("09d6afa5-c898-44a1-bddb-d40a4feeee81");
+        when(inventoryRepository.addStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81", new SecondaryStatus("legal", "in-progress"))).thenReturn("09d6afa5-c898-44a1-bddb-d40a4feeee81");
 
-        String actualSku = inventoryService.updateStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81",secondaryStatuses);
+        String actualSku = inventoryService.updateStatus("09d6afa5-c898-44a1-bddb-d40a4feeee81", secondaryStatuses);
 
         assertEquals(expectedSku, actualSku);
     }
 
     @Test
-    void ShouldReturnSkuAndUpdateInventory() throws Exception{
+    void ShouldReturnSkuAndUpdateInventory() throws Exception {
         JsonNode attributes = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributes).put("vin", "AP31CM9873");
         ((ObjectNode) attributes).put("make", "Tata");
         ((ObjectNode) attributes).put("year", 2016);
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
-        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
+        secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
         Map<String, Object> map = new HashMap<>();
-        map.put("status","procured");
-        map.put("costPrice",460000);
+        map.put("status", "procured");
+        map.put("costPrice", 460000);
         JsonNode attributesValue = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributesValue).put("color", "red");
         ((ObjectNode) attributesValue).put("year", 2021);
-        map.put("attributes",attributesValue);
+        map.put("attributes", attributesValue);
         String expectedSku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         Inventory inventory = new Inventory("09d6afa5-c898-44a1-bddb-d40a4feeee81", "car", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus);
         when(inventoryRepository.findInventory("09d6afa5-c898-44a1-bddb-d40a4feeee81")).thenReturn(inventory);
 
-        String actualSku = inventoryService.patchInventory("09d6afa5-c898-44a1-bddb-d40a4feeee81",map);
+        String actualSku = inventoryService.patchInventory("09d6afa5-c898-44a1-bddb-d40a4feeee81", map);
 
         assertEquals(expectedSku, actualSku);
     }

@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MockBean({UserService.class})
-//@MockBean({LoginUserService.class})
 @WebMvcTest(controllers = UserController.class)
 @ExtendWith(MockitoExtension.class)
 class UserControllerTests {
@@ -49,6 +48,7 @@ class UserControllerTests {
     JPAUserRepository jpaUserRepositoryBean;
     @Autowired
     private MockMvc mockMvc;
+
     @BeforeEach
     public void init() {
         UserController userController = new UserController(loginUserService);
@@ -62,9 +62,8 @@ class UserControllerTests {
 
     @Test
     @BeforeTestMethod
-
     void ShouldReturnLoginResponse() throws Exception {
-        UserRequest userRequest = new UserRequest("parimalvarma@gmail.com","vparimal587");
+        UserRequest userRequest = new UserRequest("parimalvarma@gmail.com", "vparimal587");
         LoginResponse loginResponse = new LoginResponse("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aW1hbGphaW5AZ21haWwuY29tIiwiZXhwIjoxNjc3NTkzMzk1LCJpYXQiOjE2Nzc1NzUzOTV9.olt1Ma8eYtoN-efVLs7R2G5wExb_xDNa9UeLQqph1Pg");
         when(loginUserService.createAuthenticationToken(userRequest)).thenReturn(new ResponseEntity<>(loginResponse, HttpStatus.CREATED));
 

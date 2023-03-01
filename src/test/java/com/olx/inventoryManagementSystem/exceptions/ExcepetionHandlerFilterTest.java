@@ -84,7 +84,7 @@ class ExcepetionHandlerFilterTest {
         //Exception actualError= Assertions.assertThrows(Exception.class, ()->excepetionHandlerFilter.doFilterInternal(request,response,filterChain));
         //assertEquals(expected,actualError.getMessage());
 
-        excepetionHandlerFilter.doFilterInternal(request,response,filterChain);
+        excepetionHandlerFilter.doFilterInternal(request, response, filterChain);
 //        Exception actualError= Assertions.assertThrows(RuntimeException.class, ()->excepetionHandlerFilter.doFilterInternal(request,response,filterChain));
 //
 //        assertEquals(expected,actualError.getMessage());

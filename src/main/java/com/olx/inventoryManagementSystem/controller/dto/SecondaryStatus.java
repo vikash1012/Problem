@@ -2,8 +2,6 @@ package com.olx.inventoryManagementSystem.controller.dto;
 
 import lombok.*;
 
-
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -22,5 +20,4 @@ public class SecondaryStatus implements Serializable {
         SecondaryStatus that = (SecondaryStatus) o;
         return name.equals(that.name);
     }
-
 }
