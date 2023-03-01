@@ -23,8 +23,4 @@ public class SecondaryStatus implements Serializable {
         return name.equals(that.name);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
 }

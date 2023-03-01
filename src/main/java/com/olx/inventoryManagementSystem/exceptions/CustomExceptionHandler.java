@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class CustomExceptionHandler {
 
     @ExceptionHandler({InventoryNotFoundException.class})
-    public ResponseEntity<Object> handlerCarNotFoundException(InventoryNotFoundException ex) {
+    public ResponseEntity<Object> handlerInventoryNotFoundException(InventoryNotFoundException ex) {
         final ExceptionResponse exceptionResponse = new ExceptionResponse("NotFound", ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }

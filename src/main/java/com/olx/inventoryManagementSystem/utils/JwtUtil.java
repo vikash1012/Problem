@@ -45,7 +45,7 @@ public class JwtUtil {
         return createToken(claims, userDetails.getUsername());
     }
 
-    private String createToken(Map<String, Object> claims, String email) {
+    String createToken(Map<String, Object> claims, String email) {
         return Jwts.builder().setClaims(claims).setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
@@ -53,7 +53,7 @@ public class JwtUtil {
     }
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractEmail(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (!isTokenExpired(token) && username.equals(userDetails.getUsername()));
     }
 
 }

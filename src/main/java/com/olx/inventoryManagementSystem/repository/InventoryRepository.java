@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Repository
-@NoArgsConstructor
 public class InventoryRepository {
     JPAInventoryRepository jpaInventoryRepository;
 

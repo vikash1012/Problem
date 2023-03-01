@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olx.inventoryManagementSystem.model.User;
 import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
+import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private LoginUserService loginUserService;
     @Autowired
     private JPAUserRepository jPAUserRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    WebSecurityConfig webSecurityConfig;
 
-
+    @Autowired(required = false)
+    public JwtRequestFilter(@Lazy UserRepository userRepository,LoginUserService loginUserService, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.loginUserService = loginUserService;
+        this.jwtUtil = jwtUtil;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -49,7 +59,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
         if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
         jwt = authorizationHeader.substring(7);
-        email = getEmail(authorizationHeader, email, jwt);
+        email = getEmail(authorizationHeader, jwt);
         validateToken(request, email, jwt);
         filterChain.doFilter(request, response);
     }
@@ -68,7 +78,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
     }
 
-    private String getEmail(String authorizationHeader, String email, String jwt) {
+    private String getEmail(String authorizationHeader, String jwt) {
+        String email = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 email = jwtUtil.extractEmail(jwt);
@@ -93,8 +104,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean IsPermitted(HttpServletRequest request) {
-        return request.getMethod().equals("GET") || request.getRequestURI().equals("/users/login")
-                || request.getRequestURI().equals("/users/register");
+        return request.getRequestURI().equals("/users/register") || request.getRequestURI().equals("/users/login")
+                || request.getMethod().equals("GET");
     }
 }
 

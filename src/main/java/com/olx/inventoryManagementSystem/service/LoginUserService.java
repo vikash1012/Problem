@@ -5,8 +5,10 @@ import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
 import com.olx.inventoryManagementSystem.exceptions.InvalidLoginCredential;
 import com.olx.inventoryManagementSystem.model.User;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
+import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,23 +24,27 @@ import java.util.ArrayList;
 @Service
 public class LoginUserService implements UserDetailsService {
 
+    @Lazy
     @Autowired
     UserRepository userRepository;
+    @Lazy
     @Autowired
-    private AuthenticationManager authenticationManager;
+    WebSecurityConfig webSecurityConfig;
+
+    @Lazy
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired(required = false)
+    public LoginUserService(@Lazy UserRepository userRepository, @Lazy WebSecurityConfig webSecurityConfig, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.webSecurityConfig = webSecurityConfig;
+        this.jwtUtil = jwtUtil;
+    }
+
     public LoginUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-    @Autowired(required = false)
-    public LoginUserService(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -60,10 +66,12 @@ public class LoginUserService implements UserDetailsService {
 
     private void authenticateUser(UserRequest userRequest) throws InvalidLoginCredential {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),
+            webSecurityConfig.authenticationManager().authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),
                     userRequest.getPassword()));
         } catch (BadCredentialsException e) {
             throw new InvalidLoginCredential("Invalid Login Credential");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

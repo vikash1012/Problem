@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,24 +41,23 @@ class InventoryServiceTest {
         inventoryService = new InventoryService(inventoryRepository);
     }
 
-//    @Test
-//    void ShouldReturnInventorySku() throws Exception{
-//        String expectedInventorySku = "d59fdbd5-0c56-4a79-8905-6989601890be";
-//        JsonNode attributes = new ObjectMapper().createObjectNode();
-//        ((ObjectNode) attributes).put("vin", "AP31CM9873");
-//        ((ObjectNode) attributes).put("make", "Tata");
-//        ((ObjectNode) attributes).put("model", "Nexon");
-//        ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
-//        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
-//        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
-//        InventoryRequest inventoryRequest = new InventoryRequest("bike","mumbai",attributes,450000,secondaryStatus);
-//        when(inventoryRepository.createInventory(new Inventory("d59fdbd5-0c56-4a79-8905-6989601890be", "bike", "mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus))).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
-//
-//        String actualInventorySku = inventoryService.createInventory(inventoryRequest);
-//
-//        assertEquals(expectedInventorySku, actualInventorySku);
-//    }
+    @Test
+    void ShouldReturnInventorySku() throws Exception{
+        String expectedInventorySku = "d59fdbd5-0c56-4a79-8905-6989601890be";
+        JsonNode attributes = new ObjectMapper().createObjectNode();
+        ((ObjectNode) attributes).put("vin", "AP31CM9873");
+        ((ObjectNode) attributes).put("make", "Tata");
+        ((ObjectNode) attributes).put("model", "Nexon");
+        ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
+        secondaryStatus.add(new SecondaryStatus("warehouse","in-repair"));
+        secondaryStatus.add(new SecondaryStatus("transit","in-progress"));
+        InventoryRequest inventoryRequest = new InventoryRequest("bike","mumbai",attributes,450000,secondaryStatus);
+        when(inventoryRepository.createInventory(any())).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
 
+        String actualInventorySku = inventoryService.createInventory(inventoryRequest);
+
+        assertEquals(expectedInventorySku, actualInventorySku);
+    }
     @Test
     void ShouldThrowInvalidTypeException() throws InvalidTypeException {
         JsonNode attributes = new ObjectMapper().createObjectNode();
