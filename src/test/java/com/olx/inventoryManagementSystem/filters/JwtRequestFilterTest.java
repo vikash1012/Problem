@@ -65,7 +65,7 @@ class JwtRequestFilterTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
-        request.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95A");
+        request.addHeader("Authorization", "Bearer "+ jwtToken);
         when(loginUserService.loadUserByUsername("user@email.com")).thenReturn(dummy);
 
         jwtRequestFilter.doFilterInternal(request, response, filterChain);

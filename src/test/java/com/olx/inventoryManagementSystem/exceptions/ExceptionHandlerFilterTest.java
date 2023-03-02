@@ -1,13 +1,7 @@
 package com.olx.inventoryManagementSystem.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.olx.inventoryManagementSystem.controller.UserController;
-import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
-import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
-import com.olx.inventoryManagementSystem.filters.JwtRequestFilter;
 import com.olx.inventoryManagementSystem.service.UserService;
-import com.olx.inventoryManagementSystem.utils.JwtUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,38 +9,24 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockFilterChain;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.net.http.*;
-import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class ExcepetionHandlerFilterTest {
+class ExceptionHandlerFilterTest {
 
     @Mock
-    ExcepetionHandlerFilter excepetionHandlerFilter = new ExcepetionHandlerFilter();
+    ExceptionHandlerFilter exceptionHandlerFilter = new ExceptionHandlerFilter();
 
     @Autowired
     private MockMvc mockMvc;
@@ -62,7 +42,7 @@ class ExcepetionHandlerFilterTest {
 
     @BeforeEach
     void setUp() {
-        excepetionHandlerFilter = new ExcepetionHandlerFilter();
+        exceptionHandlerFilter = new ExceptionHandlerFilter();
 //        loginUserService = new LoginUserService(userRepository,webSecurityConfig,jwtUtil);
 //        dummy = new org.springframework.security.core.userdetails.User("user@email.com", "vparimal587", new ArrayList<>());
 //        jwtToken = jwtUtil.generateToken(dummy);
@@ -84,7 +64,7 @@ class ExcepetionHandlerFilterTest {
         //Exception actualError= Assertions.assertThrows(Exception.class, ()->excepetionHandlerFilter.doFilterInternal(request,response,filterChain));
         //assertEquals(expected,actualError.getMessage());
 
-        excepetionHandlerFilter.doFilterInternal(request, response, filterChain);
+        exceptionHandlerFilter.doFilterInternal(request, response, filterChain);
 //        Exception actualError= Assertions.assertThrows(RuntimeException.class, ()->excepetionHandlerFilter.doFilterInternal(request,response,filterChain));
 //
 //        assertEquals(expected,actualError.getMessage());
