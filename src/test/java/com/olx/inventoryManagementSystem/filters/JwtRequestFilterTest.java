@@ -76,11 +76,21 @@ class JwtRequestFilterTest {
     }
 
     @Test
-    void WhenAuthorizationHeaderIsNullAndIsPermitted() throws ServletException, IOException {
+    void WhenAuthorizationHeaderIsNullAndIsPermittedForLogin() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
-        request.setMethod("GET");
+        request.setRequestURI("/users/login");
+
+        jwtRequestFilter.doFilterInternal(request, response, filterChain);
+    }
+
+    @Test
+    void WhenAuthorizationHeaderIsNullAndIsPermittedForRegister() throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
+        request.setRequestURI("/users/register");
 
         jwtRequestFilter.doFilterInternal(request, response, filterChain);
     }

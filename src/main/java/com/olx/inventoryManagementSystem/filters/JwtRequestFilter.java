@@ -90,8 +90,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean IsPermitted(HttpServletRequest request) {
-        return request.getRequestURI().equals("/users/register") || request.getRequestURI().equals("/users/login")
-                || request.getMethod().equals("GET");
+        return request.getRequestURI().equals("/users/register") || request.getRequestURI().equals("/users/login");
     }
 }
 
