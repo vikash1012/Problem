@@ -3,7 +3,6 @@ package com.olx.inventoryManagementSystem.service;
 import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
 import com.olx.inventoryManagementSystem.model.User;
-import com.olx.inventoryManagementSystem.repository.InventoryRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 

@@ -16,28 +16,23 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-
 import java.io.IOException;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class ExceptionHandlerFilterTest {
 
     @Mock
     ExceptionHandlerFilter exceptionHandlerFilter = new ExceptionHandlerFilter();
-
-    @Autowired
-    private MockMvc mockMvc;
-
     @Mock
     ObjectMapper objectMapper = new ObjectMapper();
-
     @MockBean
     UserService userService;
-
     @Mock
     FilterChain filterChain = mock(FilterChain.class);
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {

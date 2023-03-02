@@ -6,20 +6,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 class JwtUtilTest {
-    JwtUtil jwtUtil;
     private static UserDetails dummy;
     private static String jwtToken;
+    JwtUtil jwtUtil;
+    UserDetails userDetails = mock(UserDetails.class);
 
     @BeforeEach
     void init() {
         jwtUtil = new JwtUtil();
     }
-
-    UserDetails userDetails = mock(UserDetails.class);
 
     @BeforeEach
     void setUp() {

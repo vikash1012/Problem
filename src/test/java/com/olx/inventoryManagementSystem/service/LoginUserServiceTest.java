@@ -1,9 +1,7 @@
 package com.olx.inventoryManagementSystem.service;
 
 import com.olx.inventoryManagementSystem.controller.dto.LoginResponse;
-import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
-import com.olx.inventoryManagementSystem.exceptions.UserNameNotFoundException;
 import com.olx.inventoryManagementSystem.model.User;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
@@ -15,30 +13,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
 class LoginUserServiceTest {
+    private static UserDetails dummy;
+    private static String jwtToken;
     @Mock
     UserRepository userRepository;
     @Mock
@@ -47,8 +41,6 @@ class LoginUserServiceTest {
     WebSecurityConfig webSecurityConfig;
     @InjectMocks
     private LoginUserService loginUserService;
-    private static UserDetails dummy;
-    private static String jwtToken;
 
     @BeforeEach
     void setup() {

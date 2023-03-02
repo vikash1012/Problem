@@ -1,19 +1,13 @@
 package com.olx.inventoryManagementSystem.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryRequest;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
-import com.olx.inventoryManagementSystem.exceptions.InvalidTypeException;
-import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
-import com.olx.inventoryManagementSystem.filters.JwtRequestFilter;
-import com.olx.inventoryManagementSystem.model.Inventory;
 import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
-import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import com.olx.inventoryManagementSystem.service.InventoryService;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
@@ -23,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
@@ -37,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -49,20 +40,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class InventoryControllerTest {
     @MockBean
     InventoryService inventoryService;
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     JwtUtil jwtUtil;
-
     @MockBean
     LoginUserService loginUserService;
-
     @MockBean
     UserRepository userRepository;
-
     @MockBean
     JPAUserRepository jpaUserRepository;
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     public void init() {
@@ -120,8 +107,8 @@ class InventoryControllerTest {
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
         secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
         secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
-        when (inventoryService.createInventory(new InventoryRequest("bike","mumbai",attributes,450000,secondaryStatus))).thenReturn ("d59fdbd5-0c56-4a79-8905-6989601890be");
-        String expectedResponse="{\"sku\":\"d59fdbd5-0c56-4a79-8905-6989601890be\"}";
+        when(inventoryService.createInventory(new InventoryRequest("bike", "mumbai", attributes, 450000, secondaryStatus))).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
+        String expectedResponse = "{\"sku\":\"d59fdbd5-0c56-4a79-8905-6989601890be\"}";
 
         MockHttpServletRequestBuilder postRequest = post("/inventories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +123,7 @@ class InventoryControllerTest {
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
         secondaryStatus.add(new SecondaryStatus("warehouse", "in-repair"));
         secondaryStatus.add(new SecondaryStatus("transit", "in-progress"));
-        when (inventoryService.updateStatus("d59fdbd5-0c56-4a79-8905-6989601890be", secondaryStatus)).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
+        when(inventoryService.updateStatus("d59fdbd5-0c56-4a79-8905-6989601890be", secondaryStatus)).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
 
         MockHttpServletRequestBuilder putRequest = put("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be/statuses")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -149,13 +136,13 @@ class InventoryControllerTest {
     void ShouldReturnNoContentHttpStatusCodeForAttributesUpdate() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> map = new HashMap<>();
-        map.put("status","procured");
-        map.put("costPrice",460000);
+        map.put("status", "procured");
+        map.put("costPrice", 460000);
         JsonNode attributesValue = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributesValue).put("color", "red");
         ((ObjectNode) attributesValue).put("year", 2021);
-        map.put("attributes",attributesValue);
-        when (inventoryService.patchInventory("d59fdbd5-0c56-4a79-8905-6989601890be", map)).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
+        map.put("attributes", attributesValue);
+        when(inventoryService.patchInventory("d59fdbd5-0c56-4a79-8905-6989601890be", map)).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
 
         MockHttpServletRequestBuilder patchRequest = patch("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be")
                 .contentType(MediaType.APPLICATION_JSON)

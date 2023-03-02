@@ -1,11 +1,9 @@
 package com.olx.inventoryManagementSystem.controller;
 
-import com.olx.inventoryManagementSystem.controller.dto.LoginResponse;
 import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
 import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
-import com.olx.inventoryManagementSystem.service.InventoryService;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.service.UserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
@@ -21,19 +19,15 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MockBean({UserService.class})
-//@MockBean({LoginUserService.class})
 @WebMvcTest(controllers = UserController.class)
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -51,6 +45,8 @@ class UserControllerTest {
     JPAUserRepository jpaUserRepositoryBean;
     @Autowired
     private MockMvc mockMvc;
+    @InjectMocks
+    private UserRepository userRepository;
 
     @BeforeEach
     public void init() {
@@ -59,9 +55,6 @@ class UserControllerTest {
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
-
-    @InjectMocks
-    private UserRepository userRepository;
 
     @Test
     void ShouldReturnRegistrationResponse() throws Exception {

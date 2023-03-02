@@ -1,14 +1,10 @@
 package com.olx.inventoryManagementSystem.exceptions;
 
-import com.olx.inventoryManagementSystem.repository.InventoryRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CustomExceptionHandlerTest {
     CustomExceptionHandler customExceptionHandler = new CustomExceptionHandler();

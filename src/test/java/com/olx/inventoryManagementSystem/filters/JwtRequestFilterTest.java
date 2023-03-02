@@ -13,44 +13,35 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
 class JwtRequestFilterTest {
+    private static String jwtToken;
+    private static UserDetails dummy;
     JwtRequestFilter jwtRequestFilter;
     @Mock
     JPAUserRepository jpaUserRepository = mock(JPAUserRepository.class);
     @Mock
     UserRepository userRepository = new UserRepository(jpaUserRepository);
     @Mock
+    LoginUserService loginUserService = new LoginUserService(userRepository);
+    @Mock
     JwtUtil jwtUtil = new JwtUtil();
     @Mock
     WebSecurityConfig webSecurityConfig;
-    @Mock
-    LoginUserService loginUserService = new LoginUserService(userRepository);
-
-    private static String jwtToken;
-
-    private static UserDetails dummy;
 
     @BeforeEach
     void setUp() {
@@ -65,7 +56,7 @@ class JwtRequestFilterTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
-        request.addHeader("Authorization", "Bearer "+ jwtToken);
+        request.addHeader("Authorization", "Bearer " + jwtToken);
         when(loginUserService.loadUserByUsername("user@email.com")).thenReturn(dummy);
 
         jwtRequestFilter.doFilterInternal(request, response, filterChain);
