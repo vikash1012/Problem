@@ -67,9 +67,8 @@ public class InventoryRepository {
         return inventory;
     }
 
-    // TODO: no need to return anything from here
-    public String updateInventory(Inventory inventory) {
+    // TODO: no need to return anything from here: Done
+    public void updateInventory(Inventory inventory) {
         this.jpaInventoryRepository.save(inventory);
-        return inventory.getSku();
     }
 }

@@ -13,10 +13,15 @@ import java.util.ArrayList;
 @Setter
 @EqualsAndHashCode
 public class InventoryRequest {
+
     String type;
+
     String location;
+
     JsonNode attributes;
+
     float costPrice;
+
     ArrayList<SecondaryStatus> secondaryStatus;
 
 }

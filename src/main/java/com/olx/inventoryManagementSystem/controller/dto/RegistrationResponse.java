@@ -6,5 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class RegistrationResponse {
+
     String message;
+
 }

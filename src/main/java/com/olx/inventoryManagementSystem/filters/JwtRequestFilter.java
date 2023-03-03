@@ -51,30 +51,38 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private void validateToken(HttpServletRequest request, String email, String jwt) {
-        // TODO: Early Return and clean up method
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.loginUserService.loadUserByUsername(email);
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null,
-                                userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource()
-                        .buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
+        // TODO: Early Return and clean up method :Done
+        if(email == null){
+            return;
         }
+        if(SecurityContextHolder.getContext().getAuthentication() != null){
+            return;
+        }
+        UserDetails userDetails = this.loginUserService.loadUserByUsername(email);
+        if (!jwtUtil.validateToken(jwt, userDetails)) {
+            return;
+        }
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(userDetails, null,
+                        userDetails.getAuthorities());
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
 
     private String getEmail(String authorizationHeader, String jwt) {
         String email = null;
-        // Early return;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            try {
-                email = jwtUtil.extractEmail(jwt);
-            } catch (RuntimeException e) {
-                // TODO : Do not throw run time exception
-                throw new RuntimeException("Token Invalid");
-            }
+        // TODO: Early return :Done
+        if(authorizationHeader==null){
+            return email;
+        }
+        if(authorizationHeader.startsWith("Bearer ")){
+            return email;
+        }
+        try {
+            email = jwtUtil.extractEmail(jwt);
+        } catch (RuntimeException e) {
+            // TODO : Do not throw run time exception
+            throw new RuntimeException("Token Invalid");
         }
         return email;
     }

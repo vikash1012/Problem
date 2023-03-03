@@ -31,16 +31,9 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
-    // TODO: move private methods downwards and send type as parameter
-    private static void isAcceptablenventoryType(InventoryRequest inventoryRequest) throws InvalidTypeException {
-        if (!inventoryRequest.getType().equalsIgnoreCase("car")
-                && !inventoryRequest.getType().equalsIgnoreCase("bike")) {
-            throw new InvalidTypeException(inventoryRequest.getType() + " is not supported");
-        }
-    }
-
+    // TODO: move private methods downwards and send type as parameter: Done
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
-        isAcceptablenventoryType(inventoryRequest);
+        isAcceptableInventoryType(inventoryRequest.getType());
         UUID sku = UUID.randomUUID(); // TODO: should be part of inventory constructor
         LocalDateTime localDateTime = LocalDateTime.now(); // TODO: should be part of inventory constructor
         Inventory inventory = new Inventory(sku.toString(), inventoryRequest.getType(), inventoryRequest.getLocation(),
@@ -100,12 +93,19 @@ public class InventoryService {
         return sku;
     }
 
+    private static void isAcceptableInventoryType(String type) throws InvalidTypeException {
+        if (!type.equalsIgnoreCase("car")
+                && !type.equalsIgnoreCase("bike")) {
+            throw new InvalidTypeException(type + " is not supported");
+        }
+    }
+
     private static void updateInventory(Map<String, Object> field, Inventory inventory) {
         field.forEach((key, value) -> {
             Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
             if (key.equals("attributes")) {
                 updateAttributes(inventory, value, foundField);
-                // Remove else if, do early return
+                // TODO: Remove else if, do early return
             } else if (!key.equals("attributes")) {
                 foundField.setAccessible(true);
                 ReflectionUtils.setField(foundField, inventory, (Object) value);

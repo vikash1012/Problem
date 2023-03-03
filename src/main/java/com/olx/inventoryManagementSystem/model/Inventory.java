@@ -25,33 +25,46 @@ import java.util.ArrayList;
 @EqualsAndHashCode
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Inventory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")
     private int id;
+
     private String sku;
+
     private String type;
+
     private String status = "created";
+
     private String location;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
     @Column(name = "created_by")
     private String createdBy;
+
     @Column(name = "updated_by")
     private String updatedBy;
+
     @Column(name = "attributes", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private Object attributes; // why not json node!!
+
     @Column(name = "cost_price")
     private float costPrice;
+
     @Column(name = "sold_at")
     private float soldAt;
+
     @Column(name = "secondary_status", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;

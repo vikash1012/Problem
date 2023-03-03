@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 @EqualsAndHashCode
 public class ExceptionResponse {
+
     String errorCode;
+
     String errorMessage;
+
 }
