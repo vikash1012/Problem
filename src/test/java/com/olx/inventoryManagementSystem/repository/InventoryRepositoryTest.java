@@ -33,6 +33,8 @@ class InventoryRepositoryTest {
         inventoryRepository = new InventoryRepository(jpaInventoryRepository);
     }
 
+    // TODO: DRY
+    // TODO: Verify mocks
     @Test
     void ShouldReturnIdFromDB() {
         JsonNode attributes = new ObjectMapper().createObjectNode();
@@ -67,6 +69,7 @@ class InventoryRepositoryTest {
         Inventory actual = inventoryRepository.findInventory(sku);
 
         assertEquals(expected, actual);
+//        verify(jpaInventoryRepository, times(1)).findById(sku);
     }
 
     @Test
@@ -113,6 +116,7 @@ class InventoryRepositoryTest {
         String actualSku = inventoryRepository.updateStatus("d59fdbd5-0c56-4a79-8905-6989601890bf", new SecondaryStatus("warehouse", "working"));
 
         assertEquals(expectedSku, actualSku);
+        verify(jpaInventoryRepository, times(1)).save(inventory);
     }
 
     @Test
@@ -145,8 +149,13 @@ class InventoryRepositoryTest {
         String expectedId = "d59fdbd5-0c56-4a79-8905-6989601890be";
         when(jpaInventoryRepository.save(inventory)).thenReturn(inventory);
 
-        String actualId = inventoryRepository.updateInventory(inventory);
+        inventoryRepository.updateInventory(inventory);
 
-        assertEquals(expectedId, actualId);
+        // TODO: verify - save gets call.
+        verifyMocksForUpdateInventory(inventory);
+    }
+
+    private void verifyMocksForUpdateInventory(Inventory inventory) {
+        verify(jpaInventoryRepository, times(1)).save(inventory);
     }
 }

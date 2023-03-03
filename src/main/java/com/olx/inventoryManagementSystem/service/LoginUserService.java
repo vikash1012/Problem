@@ -71,6 +71,7 @@ public class LoginUserService implements UserDetailsService {
         } catch (BadCredentialsException e) {
             throw new InvalidLoginCredential("Invalid Login Credential");
         } catch (Exception e) {
+            // TODO do no throw run time exception
             throw new RuntimeException(e);
         }
     }

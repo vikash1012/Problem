@@ -51,6 +51,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private void validateToken(HttpServletRequest request, String email, String jwt) {
+        // TODO: Early Return and clean up method
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.loginUserService.loadUserByUsername(email);
             if (jwtUtil.validateToken(jwt, userDetails)) {
@@ -66,10 +67,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private String getEmail(String authorizationHeader, String jwt) {
         String email = null;
+        // Early return;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 email = jwtUtil.extractEmail(jwt);
             } catch (RuntimeException e) {
+                // TODO : Do not throw run time exception
                 throw new RuntimeException("Token Invalid");
             }
         }
@@ -84,6 +87,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return true;
         } else if (authorizationHeader == null) {
+            // TODO: No run time exceptions
             throw new RuntimeException("Forbidden Request");
         }
         return false;

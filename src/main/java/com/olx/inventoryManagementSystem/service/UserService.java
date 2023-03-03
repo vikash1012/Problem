@@ -21,6 +21,7 @@ public class UserService {
         this.webSecurityConfig = webSecurityConfig;
     }
 
+    // TODO Service layer doesn't return ResponseEntity Objects.
     public ResponseEntity<RegistrationResponse> createUser(UserRequest userRequest) {
         if (userRepository.userExistByEmail(userRequest.getEmail()) != null) {
             return new ResponseEntity<>(new RegistrationResponse("User already exists"), HttpStatus.CONFLICT);

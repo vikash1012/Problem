@@ -38,6 +38,7 @@ public class InventoryRepository {
     }
 
     public String updateStatus(String sku, SecondaryStatus statuses) {
+        // TODO : Why two times finding inventory from DB?
         Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
         Inventory inventory = inventories.get();
         Inventory updatedInventory = changeStatus(inventory, statuses);
@@ -46,6 +47,7 @@ public class InventoryRepository {
     }
 
     public String addStatus(String sku, SecondaryStatus statuses) {
+        // TODO : Why two times finding inventory from DB?
         Optional<Inventory> inventories = this.jpaInventoryRepository.findById(sku);
         Inventory inventory = inventories.get();
         ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
@@ -65,6 +67,7 @@ public class InventoryRepository {
         return inventory;
     }
 
+    // TODO: no need to return anything from here
     public String updateInventory(Inventory inventory) {
         this.jpaInventoryRepository.save(inventory);
         return inventory.getSku();

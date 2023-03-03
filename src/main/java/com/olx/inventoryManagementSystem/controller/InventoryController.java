@@ -39,14 +39,16 @@ public class InventoryController {
         return this.inventoryService.getInventory(sku);
     }
 
+    // TODO: Rmeove redundant variables/parameter across application
     @GetMapping("/inventories")
-    public List<InventoryResponse> getInventories(@PageableDefault(page = 0, size = 10, sort = "sku", direction = Sort.Direction.ASC) Pageable pageable) {
+    public List<InventoryResponse> getInventories(@PageableDefault(sort = "sku", direction = Sort.Direction.ASC) Pageable pageable) {
         return this.inventoryService.getInventories(pageable);
     }
 
     @PutMapping("/inventories/{sku}/statuses")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateStatus(@PathVariable String sku, @RequestBody ArrayList<SecondaryStatus> secondaryStatuses) throws InventoryNotFoundException {
+        // TODO: fix
         sku = this.inventoryService.updateStatus(sku, secondaryStatuses);
 
     }

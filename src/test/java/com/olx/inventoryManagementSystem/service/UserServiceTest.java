@@ -63,6 +63,7 @@ class UserServiceTest {
         UserRequest userRequest = new UserRequest("parimalvarma@gmail.com", "vparimal587");
         when(userRepository.userExistByEmail("parimalvarma@gmail.com")).thenReturn(null);
         when(webSecurityConfig.passwordEncoder()).thenReturn(new BCryptPasswordEncoder());
+        // TODO: Do not use any()
         when(userRepository.createUser(any())).thenReturn("User Registered Successfully");
         ResponseEntity<RegistrationResponse> expectedResponse = new ResponseEntity(new RegistrationResponse("User Registered Successfully"), HttpStatus.CREATED);
 

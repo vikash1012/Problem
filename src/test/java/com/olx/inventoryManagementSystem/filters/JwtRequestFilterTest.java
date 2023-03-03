@@ -96,7 +96,7 @@ class JwtRequestFilterTest {
     }
 
     @Test
-    void WhenAuthorizationHeaderIsNullAndIsNotPermitted() throws ServletException, IOException {
+    void WhenAuthorizationHeaderIsNullAndIsNotPermitted() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();

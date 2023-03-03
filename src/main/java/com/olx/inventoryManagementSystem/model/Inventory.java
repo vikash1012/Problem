@@ -47,7 +47,7 @@ public class Inventory {
     private String updatedBy;
     @Column(name = "attributes", columnDefinition = "jsonb")
     @Type(type = "jsonb")
-    private Object attributes;
+    private Object attributes; // why not json node!!
     @Column(name = "cost_price")
     private float costPrice;
     @Column(name = "sold_at")

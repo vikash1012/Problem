@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users") // TODO: Table name singular or plural?
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode

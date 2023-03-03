@@ -31,6 +31,7 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
+    // TODO: move private methods downwards and send type as parameter
     private static void isAcceptablenventoryType(InventoryRequest inventoryRequest) throws InvalidTypeException {
         if (!inventoryRequest.getType().equalsIgnoreCase("car")
                 && !inventoryRequest.getType().equalsIgnoreCase("bike")) {
@@ -40,8 +41,8 @@ public class InventoryService {
 
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
         isAcceptablenventoryType(inventoryRequest);
-        UUID sku = UUID.randomUUID();
-        LocalDateTime localDateTime = LocalDateTime.now();
+        UUID sku = UUID.randomUUID(); // TODO: should be part of inventory constructor
+        LocalDateTime localDateTime = LocalDateTime.now(); // TODO: should be part of inventory constructor
         Inventory inventory = new Inventory(sku.toString(), inventoryRequest.getType(), inventoryRequest.getLocation(),
                 localDateTime, localDateTime, "user", "user",
                 (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
@@ -70,11 +71,14 @@ public class InventoryService {
         return listOfGetResponses;
     }
 
+    // TODO: void method
     public String updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus)
             throws InventoryNotFoundException {
         Inventory inventory = this.inventoryRepository.findInventory(sku);
-        ArrayList<SecondaryStatus> inventorySecondaryStatus = inventory.getSecondaryStatus();
-        updateSecondaryStatus(sku, secondaryStatus, inventorySecondaryStatus);
+        // TODO: Fix time
+//        inventory.UpdateStatus(secondaryStatus);
+
+//        inventoryRepository.save(inventory);
         return sku;
     }
 
@@ -101,6 +105,7 @@ public class InventoryService {
             Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
             if (key.equals("attributes")) {
                 updateAttributes(inventory, value, foundField);
+                // Remove else if, do early return
             } else if (!key.equals("attributes")) {
                 foundField.setAccessible(true);
                 ReflectionUtils.setField(foundField, inventory, (Object) value);
