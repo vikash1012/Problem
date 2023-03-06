@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserRepositoryTest {
@@ -31,17 +31,19 @@ class UserRepositoryTest {
         User actualUser = userRepository.userExistByEmail(email);
 
         assertEquals(expectedUser, actualUser);
+        verify(jpaUserRepository, times(1)).findByEmail(email);
     }
 
     @Test
     void ShouldReturnStringWhenUserIsCreated() {
-        String expected = "User Registered Successfully";
+        String expected = "user@email.com";
         User user = new User("user@email.com", "124");
-        when(jpaUserRepository.save(user)).thenReturn(null);
+        when(jpaUserRepository.save(user)).thenReturn(user);
 
         String actual = userRepository.createUser(user);
 
         assertEquals(expected, actual);
+        verify(jpaUserRepository,times(1)).save(user);
     }
 
 }

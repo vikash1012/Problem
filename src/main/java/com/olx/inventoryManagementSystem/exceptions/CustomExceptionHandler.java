@@ -44,12 +44,12 @@ public class CustomExceptionHandler {
     @ExceptionHandler({InvalidTokenException.class})
     public ResponseEntity<Object> handlerInvalidTokenException(InvalidTokenException ex) {
         final ExceptionResponse exceptionResponse = new ExceptionResponse("InvalidToken", ex.getMessage());
-        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({ForbiddenRequestException.class})
     public ResponseEntity<Object> handlerForbiddenRequestException(ForbiddenRequestException ex) {
         final ExceptionResponse exceptionResponse = new ExceptionResponse("Forbidden", ex.getMessage());
-        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
 }

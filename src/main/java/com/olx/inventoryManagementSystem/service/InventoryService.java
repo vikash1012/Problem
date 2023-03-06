@@ -69,11 +69,10 @@ public class InventoryService {
         inventoryRepository.saveInventory(inventory);
     }
 
-    public String patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException {
+    public void patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException {
         Inventory inventory = inventoryRepository.findInventory(sku);
         updateInventory(field, inventory);
-        inventoryRepository.updateInventory(inventory);
-        return sku;
+        inventoryRepository.saveInventory(inventory);
     }
 
     private static void isAcceptableInventoryType(String type) throws InvalidTypeException {

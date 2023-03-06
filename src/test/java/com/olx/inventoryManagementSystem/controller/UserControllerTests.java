@@ -19,10 +19,13 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,7 +40,7 @@ class UserControllerTests {
     @MockBean
     LoginUserService loginUserService;
     @MockBean
-    JwtUtil jwtUtilBean;
+    JwtUtil jwtUtil;
     @MockBean
     UserRepository userRepositoryBean;
     @MockBean
@@ -58,9 +61,9 @@ class UserControllerTests {
     @Test
     @BeforeTestMethod
     void ShouldReturnLoginResponse() throws Exception {
-        UserRequest userRequest = new UserRequest("parimalvarma@gmail.com", "vparimal587");
-        LoginResponse loginResponse = new LoginResponse("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aW1hbGphaW5AZ21haWwuY29tIiwiZXhwIjoxNjc3NTkzMzk1LCJpYXQiOjE2Nzc1NzUzOTV9.olt1Ma8eYtoN-efVLs7R2G5wExb_xDNa9UeLQqph1Pg");
-        when(loginUserService.createAuthenticationToken(userRequest)).thenReturn(new ResponseEntity<>(loginResponse, HttpStatus.CREATED));
+        UserDetails dummy = new org.springframework.security.core.userdetails.User("user@email.com", "123456", new ArrayList<>());
+        LoginResponse loginResponse = new LoginResponse(jwtUtil.generateToken(dummy));
+        when(loginUserService.createAuthenticationToken(new UserRequest("parimalvarma@gmail.com", "vparimal587"))).thenReturn(loginResponse);
 
         MockHttpServletRequestBuilder postRequest = post("/users/login")
                 .contentType(MediaType.APPLICATION_JSON)

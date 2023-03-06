@@ -56,7 +56,7 @@ class JwtRequestFilterTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
-        request.addHeader("Authorization", "Bearer " + jwtToken);
+        request.addHeader("Authorization", jwtToken);
         when(loginUserService.loadUserByUsername("user@email.com")).thenReturn(dummy);
 
         jwtRequestFilter.doFilterInternal(request, response, filterChain);
@@ -67,8 +67,8 @@ class JwtRequestFilterTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
-        request.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95");
-        String expectedException = "Token Invalid";
+        request.addHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95");
+        String expectedException = "Token is Invalid";
 
         RuntimeException actualException = Assertions.assertThrows(RuntimeException.class, () -> jwtRequestFilter.doFilterInternal(request, response, filterChain));
 

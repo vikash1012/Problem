@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,8 +59,7 @@ class UserControllerTest {
     @Test
     void ShouldReturnRegistrationResponse() throws Exception {
         UserRequest userRequest = new UserRequest("parimalvarma@gmail.com", "vparimal587");
-        RegistrationResponse registrationResponse = new RegistrationResponse("User Registered Successfully");
-        when(userService.createUser(userRequest)).thenReturn(new ResponseEntity<>(registrationResponse, HttpStatus.CREATED));
+        when(userService.createUser(userRequest)).thenReturn("parimalvarma@gmail.com");
 
         MockHttpServletRequestBuilder postRequest = post("/users/register")
                 .contentType(MediaType.APPLICATION_JSON)

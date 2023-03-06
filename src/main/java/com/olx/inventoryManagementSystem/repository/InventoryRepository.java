@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+
 import java.util.Optional;
 
 @Repository
@@ -34,11 +35,5 @@ public class InventoryRepository {
         return this.jpaInventoryRepository.findAll(pageable);
     }
 
-    public void updateInventory(Inventory inventory) {
-        this.jpaInventoryRepository.save(inventory);
-    }
-
-    public void saveInventory(Inventory inventory) {
-        this.jpaInventoryRepository.save(inventory);
-    }
+    public void saveInventory(Inventory inventory) { this.jpaInventoryRepository.save(inventory); }
 }

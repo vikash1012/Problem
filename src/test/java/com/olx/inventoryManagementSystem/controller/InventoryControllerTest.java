@@ -24,14 +24,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,42 +58,10 @@ class InventoryControllerTest {
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
-    // TODO: Line of code in a method ? 6-7
-    // TODO: DRY - Do not repeat yourself
-    // TODO: Extract Json Response as json files
 
-    @Test
-    void ShouldFetchListOfInventoriesFromGetInventoriesApi() throws Exception {
-        List<InventoryResponse> expectedInventories = List.of(dummyInventoryResponse(dummyAttributes(), dummyStatuses()));
-        when(inventoryService.getInventories(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku"))))).thenReturn(expectedInventories);
-
-        // TODO:  String expectedResponse = File.ReadAsString('testData/InventoriesResponse.json');
-
-        MockHttpServletRequestBuilder request = get("/inventories");
-
-//        this.mockMvc.perform(request)
-//                .andExpect(status().isOk())
-////                .andExpect(content().string(expectedResponse));
-    }
-
-    @Test
-    void ShouldFetchInventoryFromGetApiForParticularSku() throws Exception {
-        JsonNode attributes = dummyAttributes();
-        ArrayList<SecondaryStatus> secondaryStatus = dummyStatuses();
-        when(inventoryService.getInventory("d59fdbd5-0c56-4a79-8905-6989601890be")).thenReturn(dummyInventoryResponse(attributes, secondaryStatus));
-        String expectedResponse = "{\"sku\":\"d59fdbd5-0c56-4a79-8905-6989601890be\",\"type\":\"car\",\"status\":\"created\",\"location\":\"Mumbai\",\"createdAt\":[2023,2,21,22,59],\"updatedAt\":[2023,2,21,22,59],\"createdBy\":\"user\",\"updatedBy\":\"user\",\"attributes\":{\"vin\":\"AP31CM9873\",\"make\":\"Tata\",\"model\":\"Nexon\"},\"costPrice\":450000.0,\"secondaryStatus\":[{\"name\":\"warehouse\",\"status\":\"in-repair\"},{\"name\":\"transit\",\"status\":\"in-progress\"}]}";
-
-        MockHttpServletRequestBuilder requestWithSku = get("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be");
-
-        this.mockMvc.perform(requestWithSku)
-                .andExpect(status().isOk())
-                .andExpect(content().string(expectedResponse));
-    }
     @Test
     void ShouldReturnCreateInventoryResponse() throws Exception {
-        JsonNode attributes = dummyAttributes();
-        ArrayList<SecondaryStatus> secondaryStatus = dummyStatuses();
-        when(inventoryService.createInventory(new InventoryRequest("bike", "mumbai", attributes, 450000, secondaryStatus))).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
+        when(inventoryService.createInventory(new InventoryRequest("bike", "mumbai", dummyAttributes(), 450000, dummyStatuses()))).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
         String expectedResponse = "{\"sku\":\"d59fdbd5-0c56-4a79-8905-6989601890be\"}";
 
         MockHttpServletRequestBuilder postRequest = post("/inventories")
@@ -104,37 +71,70 @@ class InventoryControllerTest {
         this.mockMvc.perform(postRequest)
                 .andExpect(status().isCreated())
                 .andExpect(content().string(expectedResponse));
+        verify(inventoryService, times(1)).createInventory(new InventoryRequest("bike", "mumbai", dummyAttributes(), 450000, dummyStatuses()));
+    }
+
+    @Test
+    void ShouldFetchListOfInventoriesFromGetInventoriesApi() throws Exception {
+        List<InventoryResponse> expectedInventories = List.of(dummyInventoryResponse(dummyAttributes(), dummyStatuses()));
+        when(inventoryService.getInventories(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku"))))).thenReturn(expectedInventories);
+        String expectedResponse = new String(Files.readAllBytes(Paths.get("src/test/java/com/olx/inventoryManagementSystem/controller/testData/InventoriesResponse.json")));
+
+        MockHttpServletRequestBuilder request = get("/inventories");
+
+        this.mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().string(expectedResponse.replace("\n", "").replace(" ","")));
+        verify(inventoryService, times(1)).getInventories(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku"))));
+    }
+
+    @Test
+    void ShouldFetchInventoryFromGetApiForParticularSku() throws Exception {
+        when(inventoryService.getInventory("d59fdbd5-0c56-4a79-8905-6989601890be")).thenReturn(dummyInventoryResponse(dummyAttributes(), dummyStatuses()));
+        String expectedResponse = new String(Files.readAllBytes(Paths.get("src/test/java/com/olx/inventoryManagementSystem/controller/testData/InventoryResponse.json")));
+
+        MockHttpServletRequestBuilder requestWithSku = get("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be");
+
+        this.mockMvc.perform(requestWithSku)
+                .andExpect(status().isOk())
+                .andExpect(content().string(expectedResponse.replace("\n", "").replace(" ","")));
+        verify(inventoryService, times(1)).getInventory("d59fdbd5-0c56-4a79-8905-6989601890be");
     }
 
     @Test
     void ShouldReturnNoContentHttpStatusCodeForStatusUpdate() throws Exception {
-        ArrayList<SecondaryStatus> secondaryStatus = dummyStatuses();
-        when(inventoryService.updateStatus("d59fdbd5-0c56-4a79-8905-6989601890be", secondaryStatus)).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
+        doNothing().when(inventoryService).updateStatus("d59fdbd5-0c56-4a79-8905-6989601890be", dummyStatuses());
 
         MockHttpServletRequestBuilder putRequest = put("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be/statuses")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("[{\"name\":\"warehouse\",\"status\":\"in-repair\"},{\"name\":\"transit\",\"status\":\"in-progress\"}]");
+
         this.mockMvc.perform(putRequest)
                 .andExpect(status().isNoContent());
+        verify(inventoryService, times(1)).updateStatus("d59fdbd5-0c56-4a79-8905-6989601890be", dummyStatuses());
     }
 
     @Test
     void ShouldReturnNoContentHttpStatusCodeForAttributesUpdate() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map = new HashMap<>();
+        doNothing().when(inventoryService).patchInventory("d59fdbd5-0c56-4a79-8905-6989601890be", dummyAttributesMap());
+
+        MockHttpServletRequestBuilder patchRequest = patch("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"procured\",\"costPrice\":460000,\"attributes\":{\"color\":\"red\",\"year\":2021}}");
+
+        this.mockMvc.perform(patchRequest)
+                .andExpect(status().isNoContent());
+    }
+
+    private static Map<String, Object> dummyAttributesMap() {
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("status", "procured");
         map.put("costPrice", 460000);
         JsonNode attributesValue = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributesValue).put("color", "red");
         ((ObjectNode) attributesValue).put("year", 2021);
         map.put("attributes", attributesValue);
-        when(inventoryService.patchInventory("d59fdbd5-0c56-4a79-8905-6989601890be", map)).thenReturn("d59fdbd5-0c56-4a79-8905-6989601890be");
-
-        MockHttpServletRequestBuilder patchRequest = patch("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"status\":\"procured\",\"costPrice\":460000,\"attributes\":{\"color\":\"red\",\"year\":2021}}");
-        this.mockMvc.perform(patchRequest)
-                .andExpect(status().isNoContent());
+        return map;
     }
 
     private InventoryResponse dummyInventoryResponse(JsonNode attributes, ArrayList<SecondaryStatus> secondaryStatus) {
@@ -148,7 +148,6 @@ class InventoryControllerTest {
         ((ObjectNode) attributes).put("model", "Nexon");
         return attributes;
     }
-
 
     private ArrayList<SecondaryStatus> dummyStatuses() {
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
