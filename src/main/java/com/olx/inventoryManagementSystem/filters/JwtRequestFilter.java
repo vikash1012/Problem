@@ -1,6 +1,9 @@
 package com.olx.inventoryManagementSystem.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olx.inventoryManagementSystem.exceptions.CustomExceptionHandler;
+import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
+import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
@@ -30,6 +33,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private LoginUserService loginUserService;
 
+    @Autowired
+    private CustomExceptionHandler exceptionHandler;
+
     @Autowired(required = false)
     public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -38,8 +44,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
         String email = null;
         String jwt = null;
@@ -51,7 +56,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private void validateToken(HttpServletRequest request, String email, String jwt) {
-        // TODO: Early Return and clean up method :Done
         if (email == null) {
             return;
         }
@@ -69,21 +73,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
 
-    private String getEmail(String authorizationHeader, String jwt) {
+    private String getEmail(String authorizationHeader, String jwt){
         String email;
-        // TODO: Early return :Done
         try {
             email = jwtUtil.extractEmail(jwt);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             // TODO : Do not throw run time exception
-            throw new RuntimeException("Token Invalid");
+            throw new RuntimeException("Token is Invalid");
         }
         return email;
     }
 
     private boolean isRequestPermittedWithNoAuthorizationHeader(
-            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
             return false;

@@ -4,6 +4,7 @@ import com.olx.inventoryManagementSystem.controller.dto.LoginResponse;
 import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
 import com.olx.inventoryManagementSystem.exceptions.InvalidLoginCredential;
+import com.olx.inventoryManagementSystem.exceptions.UserAlreadyExistsException;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,9 @@ public class UserController {
     }
 
     @PostMapping("/users/register")
-    public ResponseEntity<RegistrationResponse> createUser(@RequestBody UserRequest userRequest) {
-        RegistrationResponse response=this.userService.createUser(userRequest);
-        if(response.getMessage().equals("User already exists")){
-            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(response,HttpStatus.CREATED);
+    public ResponseEntity<RegistrationResponse> createUser(@RequestBody UserRequest userRequest) throws UserAlreadyExistsException {
+        String userEmail = this.userService.createUser(userRequest);
+        return new ResponseEntity<>(new RegistrationResponse("User Successfully Registered"),HttpStatus.CREATED);
     }
 
     @PostMapping("/users/login")

@@ -39,7 +39,6 @@ public class InventoryController {
         return this.inventoryService.getInventory(sku);
     }
 
-    // TODO: Remove redundant variables/parameter across application: Done
     @GetMapping("/inventories")
     public List<InventoryResponse> getInventories(@PageableDefault(sort = "sku", direction = Sort.Direction.ASC) Pageable pageable) {
         return this.inventoryService.getInventories(pageable);
@@ -48,7 +47,6 @@ public class InventoryController {
     @PutMapping("/inventories/{sku}/statuses")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateStatus(@PathVariable String sku, @RequestBody ArrayList<SecondaryStatus> secondaryStatuses) throws InventoryNotFoundException {
-        // TODO: fix :Done
         this.inventoryService.updateStatus(sku, secondaryStatuses);
 
     }
@@ -58,4 +56,5 @@ public class InventoryController {
     public void partialUpdateInventory(@RequestBody Map<String, Object> value, @PathVariable("sku") String sku) throws InventoryNotFoundException {
         this.inventoryService.patchInventory(sku, value);
     }
+
 }

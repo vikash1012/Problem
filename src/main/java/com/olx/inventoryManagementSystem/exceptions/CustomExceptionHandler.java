@@ -34,4 +34,22 @@ public class CustomExceptionHandler {
         final ExceptionResponse exceptionResponse = new ExceptionResponse("InvalidUser", ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler({UserAlreadyExistsException.class})
+    public ResponseEntity<Object> handlerUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        final ExceptionResponse exceptionResponse = new ExceptionResponse("UserExists", ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({InvalidTokenException.class})
+    public ResponseEntity<Object> handlerInvalidTokenException(InvalidTokenException ex) {
+        final ExceptionResponse exceptionResponse = new ExceptionResponse("InvalidToken", ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({ForbiddenRequestException.class})
+    public ResponseEntity<Object> handlerForbiddenRequestException(ForbiddenRequestException ex) {
+        final ExceptionResponse exceptionResponse = new ExceptionResponse("Forbidden", ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.CONFLICT);
+    }
 }

@@ -1,9 +1,10 @@
 package com.olx.inventoryManagementSystem.repository;
 
-
 import com.olx.inventoryManagementSystem.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public class UserRepository {
@@ -18,8 +19,7 @@ public class UserRepository {
         return jpaUserRepository.findByEmail(email);
     }
 
-    public void createUser(User user) {
-        this.jpaUserRepository.save(user);
-        // TODO : DO Not return messages like these from repository or service layer:Done
+    public String createUser(User user) {
+        return this.jpaUserRepository.save(user).getEmail();
     }
 }

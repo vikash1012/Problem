@@ -16,61 +16,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class InventoryService {
     InventoryRepository inventoryRepository;
+
+    private final static String CAR_TYPE = "car";
+
+    private final static String BIKE_TYPE = "bike";
 
     @Autowired
     public InventoryService(InventoryRepository inventoryRepository) {
         this.inventoryRepository = inventoryRepository;
     }
 
-    private static void isAcceptableInventoryType(String type) throws InvalidTypeException {
-        if (!type.equalsIgnoreCase("car")
-                && !type.equalsIgnoreCase("bike")) {
-            throw new InvalidTypeException(type + " is not supported");
-        }
-    }
-
-    private static void updateInventory(Map<String, Object> field, Inventory inventory) {
-        field.forEach((key, value) -> {
-            Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
-            if (key.equals("attributes")) {
-                updateAttributes(inventory, value, foundField);
-                // TODO: Remove else if, do early return
-            } else if (!key.equals("attributes")) {
-                foundField.setAccessible(true);
-                ReflectionUtils.setField(foundField, inventory, (Object) value);
-            }
-        });
-    }
-
-    private static void updateAttributes(Inventory inventory, Object value, Field foundField) {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {
-        });
-        Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(),
-                new TypeReference<Map<String, Object>>() {
-                });
-        prevValueMap.putAll(valueMap);
-        foundField.setAccessible(true);
-        ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
-    }
-
-    // TODO: move private methods downwards and send type as parameter: Done
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
         isAcceptableInventoryType(inventoryRequest.getType());
-        UUID sku = UUID.randomUUID(); // TODO: should be part of inventory constructor
-        LocalDateTime localDateTime = LocalDateTime.now(); // TODO: should be part of inventory constructor
-        Inventory inventory = new Inventory(sku.toString(), inventoryRequest.getType(), inventoryRequest.getLocation(),
-                localDateTime, localDateTime, "user", "user",
-                (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
+        Inventory inventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(), "user",
+                "user", (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
                 inventoryRequest.getSecondaryStatus());
         return this.inventoryRepository.createInventory(inventory);
     }
@@ -96,26 +62,11 @@ public class InventoryService {
         return listOfGetResponses;
     }
 
-    // TODO: void method
-    public String updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus)
+    public void updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus)
             throws InventoryNotFoundException {
         Inventory inventory = this.inventoryRepository.findInventory(sku);
-        // TODO: Fix time
-//        inventory.UpdateStatus(secondaryStatus);
-
-//        inventoryRepository.save(inventory);
-        return sku;
-    }
-
-    private void updateSecondaryStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus,
-                                       ArrayList<SecondaryStatus> inventorySecondaryStatus) {
-        for (SecondaryStatus statuses : secondaryStatus) {
-            if (!inventorySecondaryStatus.contains(statuses)) {
-                this.inventoryRepository.addStatus(sku, statuses);
-            } else if (inventorySecondaryStatus.contains(statuses)) {
-                this.inventoryRepository.updateStatus(sku, statuses);
-            }
-        }
+        inventory.UpdateStatus(inventory, secondaryStatus);
+        inventoryRepository.saveInventory(inventory);
     }
 
     public String patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException {
@@ -124,4 +75,40 @@ public class InventoryService {
         inventoryRepository.updateInventory(inventory);
         return sku;
     }
+
+    private static void isAcceptableInventoryType(String type) throws InvalidTypeException {
+        if (!type.equalsIgnoreCase(CAR_TYPE)
+                && !type.equalsIgnoreCase(BIKE_TYPE)) {
+            throw new InvalidTypeException(type + " is not supported");
+        }
+    }
+
+    private static void updateInventory(Map<String, Object> field, Inventory inventory) {
+        field.forEach((key, value) -> {
+            Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
+            if (!key.equals("attributes")) {
+                setFields(inventory, (Object) value, foundField);
+            }
+            updateAttributes(inventory, value, foundField);
+            setFields(inventory, (Object) value, foundField);
+        });
+    }
+
+    private static void setFields(Inventory inventory, Object value, Field foundField) {
+        foundField.setAccessible(true);
+        ReflectionUtils.setField(foundField, inventory, value);
+    }
+
+    private static void updateAttributes(Inventory inventory, Object value, Field foundField) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {
+        });
+        Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(),
+                new TypeReference<Map<String, Object>>() {
+                });
+        prevValueMap.putAll(valueMap);
+        foundField.setAccessible(true);
+        ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
+    }
+
 }

@@ -68,11 +68,8 @@ public class LoginUserService implements UserDetailsService {
         try {
             webSecurityConfig.authenticationManager().authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),
                     userRequest.getPassword()));
-        } catch (BadCredentialsException e) {
-            throw new InvalidLoginCredential("Invalid Login Credential");
         } catch (Exception e) {
-            // TODO do no throw run time exception
-            throw new RuntimeException(e);
+            throw new InvalidLoginCredential("Invalid Login Credential");
         }
     }
 

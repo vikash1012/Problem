@@ -16,6 +16,8 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
 
 @Entity
 @Table
@@ -69,18 +71,45 @@ public class Inventory {
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;
 
-    public Inventory(String sku, String type, String location, LocalDateTime createdAt,
-                     LocalDateTime updatedAt, String createdBy, String updatedBy, Object attributes, float costPrice,
-                     ArrayList<SecondaryStatus> secondaryStatus) {
-        this.sku = sku;
+    public Inventory(String type, String location, String createdBy, String updatedBy, Object attributes,
+                     float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
+        UUID sku = UUID.randomUUID();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        this.sku = sku.toString();
         this.type = type;
         this.location = location;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = localDateTime;
+        this.updatedAt = localDateTime;
         this.createdBy = createdBy;
         this.updatedBy = updatedBy;
         this.attributes = attributes;
         this.costPrice = costPrice;
         this.secondaryStatus = secondaryStatus;
+    }
+
+    public void UpdateStatus(Inventory inventory, ArrayList<SecondaryStatus> secondaryStatus) {
+        ArrayList<SecondaryStatus> inventorySecondaryStatus = inventory.getSecondaryStatus();
+        for (SecondaryStatus statuses : secondaryStatus) {
+            if (!inventorySecondaryStatus.contains(statuses)) {
+                this.addStatus(inventory, statuses);
+                continue;
+            }
+            this.changeStatus(inventory, statuses);
+        }
+    }
+
+    private void changeStatus(Inventory inventory, SecondaryStatus statuses) {
+        ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
+        for (SecondaryStatus status : statusArrayList) {
+            if (status.getName().equals(statuses.getName())) {
+                status.setStatus(statuses.getStatus());
+            }
+        }
+        inventory.setSecondaryStatus(statusArrayList);
+    }
+
+    private void addStatus(Inventory inventory, SecondaryStatus statuses) {
+        ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
+        statusArrayList.add(statuses);
     }
 }
