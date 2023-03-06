@@ -7,6 +7,7 @@ import com.olx.inventoryManagementSystem.exceptions.InvalidLoginCredential;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +32,11 @@ public class UserController {
 
     @PostMapping("/users/register")
     public ResponseEntity<RegistrationResponse> createUser(@RequestBody UserRequest userRequest) {
-        return userService.createUser(userRequest);
+        RegistrationResponse response=this.userService.createUser(userRequest);
+        if(response.getMessage().equals("User already exists")){
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     @PostMapping("/users/login")

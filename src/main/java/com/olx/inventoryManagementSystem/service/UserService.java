@@ -6,8 +6,6 @@ import com.olx.inventoryManagementSystem.model.User;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,13 +19,13 @@ public class UserService {
         this.webSecurityConfig = webSecurityConfig;
     }
 
-    // TODO Service layer doesn't return ResponseEntity Objects.
-    public ResponseEntity<RegistrationResponse> createUser(UserRequest userRequest) {
+    // TODO Service layer doesn't return ResponseEntity Objects :Done
+    public RegistrationResponse createUser(UserRequest userRequest) {
         if (userRepository.userExistByEmail(userRequest.getEmail()) != null) {
-            return new ResponseEntity<>(new RegistrationResponse("User already exists"), HttpStatus.CONFLICT);
+            return new RegistrationResponse("User already exists");
         }
         User user = new User(userRequest.getEmail(), (webSecurityConfig.passwordEncoder().encode(userRequest.getPassword())));
-        String message = userRepository.createUser(user);
-        return new ResponseEntity(new RegistrationResponse(message), HttpStatus.CREATED);
+        this.userRepository.createUser(user);
+        return new RegistrationResponse("User Registered Successfully");
     }
 }

@@ -31,6 +31,38 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
+    private static void isAcceptableInventoryType(String type) throws InvalidTypeException {
+        if (!type.equalsIgnoreCase("car")
+                && !type.equalsIgnoreCase("bike")) {
+            throw new InvalidTypeException(type + " is not supported");
+        }
+    }
+
+    private static void updateInventory(Map<String, Object> field, Inventory inventory) {
+        field.forEach((key, value) -> {
+            Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
+            if (key.equals("attributes")) {
+                updateAttributes(inventory, value, foundField);
+                // TODO: Remove else if, do early return
+            } else if (!key.equals("attributes")) {
+                foundField.setAccessible(true);
+                ReflectionUtils.setField(foundField, inventory, (Object) value);
+            }
+        });
+    }
+
+    private static void updateAttributes(Inventory inventory, Object value, Field foundField) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {
+        });
+        Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(),
+                new TypeReference<Map<String, Object>>() {
+                });
+        prevValueMap.putAll(valueMap);
+        foundField.setAccessible(true);
+        ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
+    }
+
     // TODO: move private methods downwards and send type as parameter: Done
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
         isAcceptableInventoryType(inventoryRequest.getType());
@@ -91,35 +123,5 @@ public class InventoryService {
         updateInventory(field, inventory);
         inventoryRepository.updateInventory(inventory);
         return sku;
-    }
-
-    private static void isAcceptableInventoryType(String type) throws InvalidTypeException {
-        if (!type.equalsIgnoreCase("car")
-                && !type.equalsIgnoreCase("bike")) {
-            throw new InvalidTypeException(type + " is not supported");
-        }
-    }
-
-    private static void updateInventory(Map<String, Object> field, Inventory inventory) {
-        field.forEach((key, value) -> {
-            Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
-            if (key.equals("attributes")) {
-                updateAttributes(inventory, value, foundField);
-                // TODO: Remove else if, do early return
-            } else if (!key.equals("attributes")) {
-                foundField.setAccessible(true);
-                ReflectionUtils.setField(foundField, inventory, (Object) value);
-            }
-        });
-    }
-
-    private static void updateAttributes(Inventory inventory, Object value, Field foundField) {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {});
-        Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(),
-                new TypeReference<Map<String, Object>>() {});
-        prevValueMap.putAll(valueMap);
-        foundField.setAccessible(true);
-        ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
     }
 }

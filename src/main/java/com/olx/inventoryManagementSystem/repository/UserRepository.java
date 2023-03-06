@@ -18,9 +18,8 @@ public class UserRepository {
         return jpaUserRepository.findByEmail(email);
     }
 
-    public String createUser(User user) {
-        User savedUser = this.jpaUserRepository.save(user);
-        // TODO : DO Not return messages like these from repository or service layer
-        return "User Registered Successfully";
+    public void createUser(User user) {
+        this.jpaUserRepository.save(user);
+        // TODO : DO Not return messages like these from repository or service layer:Done
     }
 }

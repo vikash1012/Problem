@@ -39,7 +39,7 @@ public class InventoryController {
         return this.inventoryService.getInventory(sku);
     }
 
-    // TODO: Rmeove redundant variables/parameter across application
+    // TODO: Remove redundant variables/parameter across application: Done
     @GetMapping("/inventories")
     public List<InventoryResponse> getInventories(@PageableDefault(sort = "sku", direction = Sort.Direction.ASC) Pageable pageable) {
         return this.inventoryService.getInventories(pageable);
