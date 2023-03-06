@@ -56,12 +56,12 @@ public class LoginUserService implements UserDetailsService {
                 new ArrayList<>());
     }
 
-    public ResponseEntity<LoginResponse> createAuthenticationToken(UserRequest userRequest)
+    public LoginResponse createAuthenticationToken(UserRequest userRequest)
             throws InvalidLoginCredential {
         authenticateUser(userRequest);
         UserDetails userDetails = loadUserByUsername(userRequest.getEmail());
         String jwt = jwtUtil.generateToken(userDetails);
-        return new ResponseEntity<>(new LoginResponse(jwt), HttpStatus.CREATED);
+        return new LoginResponse(jwt);
     }
 
     private void authenticateUser(UserRequest userRequest) throws InvalidLoginCredential {

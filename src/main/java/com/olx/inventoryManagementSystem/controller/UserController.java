@@ -39,6 +39,6 @@ public class UserController {
 
     @PostMapping("/users/login")
     public ResponseEntity<LoginResponse> createAuthenticationToken(@RequestBody UserRequest userRequest) throws InvalidLoginCredential {
-        return this.loginUserService.createAuthenticationToken(userRequest);
+        return new ResponseEntity<>(this.loginUserService.createAuthenticationToken(userRequest), HttpStatus.CREATED);
     }
 }
