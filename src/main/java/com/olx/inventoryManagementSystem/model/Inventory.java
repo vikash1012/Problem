@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@Component
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Inventory {
 
@@ -84,6 +86,21 @@ public class Inventory {
         this.updatedBy = updatedBy;
         this.attributes = attributes;
         this.costPrice = costPrice;
+        this.secondaryStatus = secondaryStatus;
+    }
+
+    public Inventory(String sku, String type, String location, String createdBy, String updatedBy, Object attributes, float costPrice, float soldAt, ArrayList<SecondaryStatus> secondaryStatus) {
+        this.sku = sku;
+        this.id=7;
+        this.type = type;
+        this.location = location;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.attributes = attributes;
+        this.costPrice = costPrice;
+        this.soldAt = soldAt;
         this.secondaryStatus = secondaryStatus;
     }
 

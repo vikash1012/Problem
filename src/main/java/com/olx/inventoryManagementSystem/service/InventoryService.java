@@ -28,9 +28,11 @@ public class InventoryService {
 
     private final static String BIKE_TYPE = "bike";
 
+
     @Autowired
     public InventoryService(InventoryRepository inventoryRepository) {
         this.inventoryRepository = inventoryRepository;
+
     }
 
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
@@ -87,6 +89,9 @@ public class InventoryService {
             Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
             if (!key.equals("attributes")) {
                 setFields(inventory, (Object) value, foundField);
+                return;
+
+
             }
             updateAttributes(inventory, value, foundField);
             setFields(inventory, (Object) value, foundField);
