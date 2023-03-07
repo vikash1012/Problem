@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users") // TODO: Table name singular or plural?
@@ -26,4 +27,5 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
 }
