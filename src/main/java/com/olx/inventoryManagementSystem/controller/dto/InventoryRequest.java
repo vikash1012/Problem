@@ -1,7 +1,5 @@
 package com.olx.inventoryManagementSystem.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 

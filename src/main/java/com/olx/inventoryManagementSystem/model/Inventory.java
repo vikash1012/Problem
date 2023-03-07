@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -91,7 +90,7 @@ public class Inventory {
 
     public Inventory(String sku, String type, String location, String createdBy, String updatedBy, Object attributes, float costPrice, float soldAt, ArrayList<SecondaryStatus> secondaryStatus) {
         this.sku = sku;
-        this.id=7;
+        this.id = 7;
         this.type = type;
         this.location = location;
         this.createdAt = LocalDateTime.now();

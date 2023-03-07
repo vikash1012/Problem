@@ -20,7 +20,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         ExceptionResponse errorResponse = new ExceptionResponse();
         if (e.getMessage().equals("Forbidden Request")) {
             errorResponse = new ExceptionResponse("Forbidden", e.getMessage());
-        } else if (e.getMessage().equals("Token Invalid")) {
+        } else if (e.getMessage().equals("Token is Invalid")) {
             errorResponse = new ExceptionResponse("Token InValid", e.getMessage());
         }
         return errorResponse;

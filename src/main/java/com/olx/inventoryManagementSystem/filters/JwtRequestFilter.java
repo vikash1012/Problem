@@ -2,9 +2,6 @@ package com.olx.inventoryManagementSystem.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olx.inventoryManagementSystem.exceptions.CustomExceptionHandler;
-import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
-import com.olx.inventoryManagementSystem.exceptions.InvalidLoginCredential;
-import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
@@ -25,6 +22,7 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+    private final static String BEARER = "Bearer ";
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -50,8 +48,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String email = null;
         String jwt = null;
         if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
+        if (!authorizationHeader.startsWith(BEARER)) {
+            throw new RuntimeException("Token is Invalid");
+        }
         jwt = authorizationHeader.substring(7);
-        email = getEmail(authorizationHeader, jwt);
+        email = getEmail(jwt);
         validateToken(request, email, jwt);
         filterChain.doFilter(request, response);
     }
@@ -74,7 +75,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
 
-    private String getEmail(String authorizationHeader, String jwt){
+    private String getEmail(String jwt) {
         String email;
         try {
             email = jwtUtil.extractEmail(jwt);
@@ -86,7 +87,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isRequestPermittedWithNoAuthorizationHeader(
-            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
             return false;

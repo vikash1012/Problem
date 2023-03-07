@@ -112,7 +112,7 @@ public class InventoryService {
                 });
         prevValueMap.putAll(valueMap);
         foundField.setAccessible(true);
-        ReflectionUtils.setField(foundField, inventory, (Object) prevValueMap);
+        ReflectionUtils.setField(foundField, inventory,  prevValueMap);
     }
 
 }

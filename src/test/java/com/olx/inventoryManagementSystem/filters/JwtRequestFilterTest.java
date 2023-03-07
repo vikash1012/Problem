@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
@@ -56,10 +55,13 @@ class JwtRequestFilterTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
-        request.addHeader("Authorization", jwtToken);
+        request.addHeader("Authorization", "Bearer "+jwtToken);
         when(loginUserService.loadUserByUsername("user@email.com")).thenReturn(dummy);
 
         jwtRequestFilter.doFilterInternal(request, response, filterChain);
+
+        verify(loginUserService,times(1)).loadUserByUsername("user@email.com");
+
     }
 
     @Test
@@ -68,7 +70,7 @@ class JwtRequestFilterTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
         request.addHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95");
-        String expectedException = "Token is Invalid";
+        String expectedException = "Token Invalid";
 
         RuntimeException actualException = Assertions.assertThrows(RuntimeException.class, () -> jwtRequestFilter.doFilterInternal(request, response, filterChain));
 

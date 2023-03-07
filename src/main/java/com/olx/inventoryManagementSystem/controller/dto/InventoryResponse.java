@@ -1,7 +1,8 @@
 package com.olx.inventoryManagementSystem.controller.dto;
 
-import com.google.gson.JsonArray;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

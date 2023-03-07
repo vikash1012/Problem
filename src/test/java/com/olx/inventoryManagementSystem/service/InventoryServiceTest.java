@@ -172,11 +172,7 @@ class InventoryServiceTest {
         JsonNode attributesValue = new ObjectMapper().createObjectNode();
         ((ObjectNode) attributesValue).put("color", "red");
         ((ObjectNode) attributesValue).put("year", 2021);
-//        String str=new ObjectMapper().writeValueAsString(attributesValue);
-        System.out.println(attributesValue);
         field.put("attributes", attributesValue);
-        System.out.println(field);
-
     }
 
 }

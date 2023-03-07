@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Objects;
+
 
 @Entity
-@Table(name = "users") // TODO: Table name singular or plural?
+@Table(name = "customer")
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode
