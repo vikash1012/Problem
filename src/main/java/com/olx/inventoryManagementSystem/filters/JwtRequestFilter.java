@@ -24,24 +24,27 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+
     private final static String BEARER = "Bearer ";
+
     @Autowired
     UserRepository userRepository;
+
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private LoginUserService loginUserService;
+
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
-
     @Autowired(required = false)
-    public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService,JwtUtil jwtUtil) {
+    public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.loginUserService = loginUserService;
         this.jwtUtil = jwtUtil;
-        //this.resolver=resolver;
     }
 
     @Autowired(required = false)
@@ -54,11 +57,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader("Authorization");
         if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
         if (!authorizationHeader.startsWith(BEARER)) {
-            resolver.resolveException(request,response,null,new InvalidTokenException("Token is Invalid"));
+            resolver.resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
             return;
         }
         String jwt = authorizationHeader.substring(7);
-        String email = getEmail(jwt,request,response);
+        String email = getEmail(jwt, request, response);
         validateToken(request, email, jwt);
         filterChain.doFilter(request, response);
     }
@@ -81,12 +84,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
 
-    private String getEmail(String jwt,HttpServletRequest request,HttpServletResponse response) {
+    private String getEmail(String jwt, HttpServletRequest request, HttpServletResponse response) {
         String email = null;
         try {
             email = jwtUtil.extractEmail(jwt);
         } catch (Exception e) {
-            resolver.resolveException(request,response,null,new InvalidTokenException("Token is Invalid"));
+            resolver.resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
 
         }
         return email;
@@ -99,7 +102,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return false;
         }
         if (!isPermitted(request)) {
-            resolver.resolveException(request,response,null,new ForbiddenRequestException("Forbidden Request"));
+            resolver.resolveException(request, response, null, new ForbiddenRequestException("Forbidden Request"));
             return true;
         }
         filterChain.doFilter(request, response);

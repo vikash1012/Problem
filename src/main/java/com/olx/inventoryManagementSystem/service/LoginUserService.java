@@ -53,8 +53,7 @@ public class LoginUserService implements UserDetailsService {
                 new ArrayList<>());
     }
 
-    public LoginResponse createAuthenticationToken(UserRequest userRequest)
-            throws InvalidLoginCredential {
+    public LoginResponse createAuthenticationToken(UserRequest userRequest) throws InvalidLoginCredential {
         authenticateUser(userRequest);
         UserDetails userDetails = loadUserByUsername(userRequest.getEmail());
         String jwt = jwtUtil.generateToken(userDetails);

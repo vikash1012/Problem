@@ -28,11 +28,9 @@ public class InventoryService {
 
     private final static String BIKE_TYPE = "bike";
 
-
     @Autowired
     public InventoryService(InventoryRepository inventoryRepository) {
         this.inventoryRepository = inventoryRepository;
-
     }
 
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
@@ -86,13 +84,13 @@ public class InventoryService {
 
     private static void updateInventory(Map<String, Object> field, Inventory inventory) {
         field.forEach((key, value) -> {
-            Field foundField = ReflectionUtils.findField(Inventory.class, (String) key);
+            Field foundField = ReflectionUtils.findField(Inventory.class, key);
             if (!key.equals("attributes")) {
-                setFields(inventory, (Object) value, foundField);
+                setFields(inventory, value, foundField);
                 return;
             }
             updateAttributes(inventory, value, foundField);
-            setFields(inventory, (Object) value, foundField);
+            setFields(inventory, value, foundField);
         });
     }
 
@@ -110,7 +108,7 @@ public class InventoryService {
                 });
         prevValueMap.putAll(valueMap);
         foundField.setAccessible(true);
-        ReflectionUtils.setField(foundField, inventory,  prevValueMap);
+        ReflectionUtils.setField(foundField, inventory, prevValueMap);
     }
 
 }

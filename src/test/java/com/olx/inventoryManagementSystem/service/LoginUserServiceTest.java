@@ -55,7 +55,9 @@ class LoginUserServiceTest {
         LoginResponse expectedResponse = new LoginResponse("124");
         when(webSecurityConfig.authenticationManager()).thenReturn(new AuthenticationManager() {
             @Override
-            public Authentication authenticate(Authentication authentication) throws AuthenticationException {return null;}
+            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+                return null;
+            }
         });
         when(jwtUtil.generateToken(dummy)).thenReturn("124");
         when(userRepository.userExistByEmail("user@email.com")).thenReturn(new User("user@email.com", "vparimal587"));

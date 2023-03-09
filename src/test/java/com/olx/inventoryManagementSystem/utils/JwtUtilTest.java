@@ -11,9 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 class JwtUtilTest {
+
     private static UserDetails dummy;
+
     private static String jwtToken;
+
     JwtUtil jwtUtil;
+
     UserDetails userDetails = mock(UserDetails.class);
 
     @BeforeEach

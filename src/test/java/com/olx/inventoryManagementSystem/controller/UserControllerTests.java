@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,18 +33,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = UserController.class)
 @ExtendWith(MockitoExtension.class)
 class UserControllerTests {
+
     @MockBean
     UserService userService;
+
     @MockBean
     LoginUserService loginUserService;
+
     @MockBean
     JwtUtil jwtUtil;
+
     @MockBean
     UserRepository userRepositoryBean;
+
     @MockBean
     JPAUserRepository jpaUserRepositoryBean;
+
     @Autowired
     private MockMvc mockMvc;
+
     @InjectMocks
     private UserRepository userRepository;
 

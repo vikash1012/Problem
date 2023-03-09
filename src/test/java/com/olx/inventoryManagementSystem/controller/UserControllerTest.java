@@ -1,6 +1,5 @@
 package com.olx.inventoryManagementSystem.controller;
 
-import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
 import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
@@ -16,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,15 +33,19 @@ class UserControllerTest {
 
     @MockBean
     LoginUserService loginUserService;
+
     @MockBean
     JwtUtil jwtUtilBean;
 
     @MockBean
     UserRepository userRepositoryBean;
+
     @MockBean
     JPAUserRepository jpaUserRepositoryBean;
+
     @Autowired
     private MockMvc mockMvc;
+
     @InjectMocks
     private UserRepository userRepository;
 

@@ -20,6 +20,7 @@ import java.util.Map;
 
 @RestController
 public class InventoryController {
+
     InventoryService inventoryService;
 
     @Autowired

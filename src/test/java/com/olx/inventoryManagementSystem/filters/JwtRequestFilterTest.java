@@ -1,7 +1,5 @@
 package com.olx.inventoryManagementSystem.filters;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.olx.inventoryManagementSystem.exceptions.ExceptionResponse;
 import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
 import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
@@ -23,32 +21,40 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
 class JwtRequestFilterTest {
+
     private static String jwtToken;
+
     private static UserDetails dummy;
+
     JwtRequestFilter jwtRequestFilter;
 
     JwtRequestFilter jwtFilter;
+
     @Mock
     JPAUserRepository jpaUserRepository = mock(JPAUserRepository.class);
+
     @Mock
     UserRepository userRepository = new UserRepository(jpaUserRepository);
+
     @Mock
     LoginUserService loginUserService = new LoginUserService(userRepository);
+
     @Mock
     JwtUtil jwtUtil = new JwtUtil();
+
     @Mock
     WebSecurityConfig webSecurityConfig;
+
     @Mock
     @Qualifier("handlerExceptionResolver")
     HandlerExceptionResolver resolver;
@@ -73,7 +79,6 @@ class JwtRequestFilterTest {
         jwtRequestFilter.doFilterInternal(request, response, filterChain);
 
         verify(loginUserService, times(1)).loadUserByUsername("user@email.com");
-
     }
 
     @Test
@@ -87,6 +92,7 @@ class JwtRequestFilterTest {
 
         verify(resolver, times(1)).resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
     }
+
     @Test
     void ShouldThrowRuntimeExceptionWhenTokenisInvalid() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -129,6 +135,5 @@ class JwtRequestFilterTest {
         jwtFilter.doFilterInternal(request, response, filterChain);
 
         verify(resolver, times(1)).resolveException(request, response, null, new ForbiddenRequestException("Forbidden Request"));
-
     }
 }

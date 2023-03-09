@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -61,7 +60,7 @@ public class Inventory {
 
     @Column(name = "attributes", columnDefinition = "jsonb")
     @Type(type = "jsonb")
-    private Object attributes; // why not json node!!
+    private Object attributes;
 
     @Column(name = "cost_price")
     private float costPrice;

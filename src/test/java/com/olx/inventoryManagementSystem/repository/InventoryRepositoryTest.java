@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +23,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InventoryRepositoryTest {
+
     InventoryRepository inventoryRepository;
+
     @Mock
     JPAInventoryRepository jpaInventoryRepository;
 
@@ -35,7 +36,7 @@ class InventoryRepositoryTest {
 
     @Test
     void ShouldReturnIdFromDB() {
-        Inventory inventory = new Inventory("car", "Mumbai",  "user", "user", dummyAttributes(), 450000, dummySecondaryStatus());
+        Inventory inventory = new Inventory("car", "Mumbai", "user", "user", dummyAttributes(), 450000, dummySecondaryStatus());
         when(jpaInventoryRepository.save(inventory)).thenReturn(inventory);
 
         String actualId = inventoryRepository.createInventory(inventory);
@@ -47,7 +48,7 @@ class InventoryRepositoryTest {
     @Test
     void ShouldReturnInventoryForValidSku() throws InventoryNotFoundException {
         String sku = "d59fdbd5-0c56-4a79-8905-6989601890be";
-        Inventory expected = new Inventory( "car", "Mumbai", "user", "user", dummyAttributes(), 450000, dummySecondaryStatus());
+        Inventory expected = new Inventory("car", "Mumbai", "user", "user", dummyAttributes(), 450000, dummySecondaryStatus());
         when(jpaInventoryRepository.findById(sku)).thenReturn(Optional.of(expected));
 
         Inventory actual = inventoryRepository.findInventory(sku);
@@ -72,7 +73,7 @@ class InventoryRepositoryTest {
     @Test
     void shouldReturnPageOfInventories() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku")));
-        Page<Inventory> expectedInventories = new PageImpl<>(List.of(new Inventory("car", "Mumbai",  "user", "user", dummyAttributes(), 450000, dummySecondaryStatus())));
+        Page<Inventory> expectedInventories = new PageImpl<>(List.of(new Inventory("car", "Mumbai", "user", "user", dummyAttributes(), 450000, dummySecondaryStatus())));
         when(jpaInventoryRepository.findAll(pageable)).thenReturn(expectedInventories);
 
         Page<Inventory> actualInventories = inventoryRepository.fetchInventories(pageable);

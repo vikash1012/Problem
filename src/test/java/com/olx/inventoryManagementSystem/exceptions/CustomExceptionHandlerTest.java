@@ -65,4 +65,26 @@ class CustomExceptionHandlerTest {
 
         assertEquals(expectedResponse, actualResponse);
     }
+
+    @Test
+    void ShouldReturnForbiddenRequestResponse() {
+        ForbiddenRequestException exception = new ForbiddenRequestException("Forbidden Request");
+        ExceptionResponse exceptionResponse = new ExceptionResponse("Forbidden", exception.getMessage());
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
+
+        ResponseEntity<Object> actualResponse = customExceptionHandler.handlerForbiddenRequestException(exception);
+
+        assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    void ShouldReturnInvalidTokenResponse() {
+        InvalidTokenException exception = new InvalidTokenException("Token is Invalid");
+        ExceptionResponse exceptionResponse = new ExceptionResponse("InvalidToken", exception.getMessage());
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+
+        ResponseEntity<Object> actualResponse = customExceptionHandler.handlerInvalidTokenException(exception);
+
+        assertEquals(expectedResponse, actualResponse);
+    }
 }

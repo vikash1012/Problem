@@ -1,6 +1,5 @@
 package com.olx.inventoryManagementSystem.controller.dto;
 
-
 import lombok.*;
 
 @Setter

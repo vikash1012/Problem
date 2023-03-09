@@ -35,5 +35,7 @@ public class InventoryRepository {
         return this.jpaInventoryRepository.findAll(pageable);
     }
 
-    public void saveInventory(Inventory inventory) { this.jpaInventoryRepository.save(inventory); }
+    public void saveInventory(Inventory inventory) {
+        this.jpaInventoryRepository.save(inventory);
+    }
 }

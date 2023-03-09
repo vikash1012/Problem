@@ -9,7 +9,6 @@ import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.olx.inventoryManagementSystem.exceptions.InventoryNotFoundException;
 import com.olx.inventoryManagementSystem.model.Inventory;
-import com.olx.inventoryManagementSystem.model.User;
 import com.olx.inventoryManagementSystem.repository.InventoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -50,9 +48,7 @@ class InventoryServiceTest {
     void ShouldReturnInventorySku() throws Exception {
         String expectedSku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         InventoryRequest inventoryRequest = new InventoryRequest("bike", "mumbai", dummyAttributes(), 450000, dummySecondoryStatus());
-        Inventory expectedInventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(), "user",
-                "user", inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
-                inventoryRequest.getSecondaryStatus());
+        Inventory expectedInventory = getInventory(inventoryRequest);
         when(inventoryRepository.createInventory(inventoryCaptor.capture())).thenReturn("09d6afa5-c898-44a1-bddb-d40a4feeee81");
 
         String actualSku = inventoryService.createInventory(inventoryRequest);
@@ -64,7 +60,6 @@ class InventoryServiceTest {
                 .isEqualTo(expectedInventory);
         assertEquals(expectedSku, actualSku);
         verify(inventoryRepository, times(1)).createInventory(actualInventory);
-
     }
 
     @Test
@@ -112,9 +107,8 @@ class InventoryServiceTest {
     void ShouldUpdateStatus() throws Exception {
         ArrayList<SecondaryStatus> existingSecondaryStatus = dummySecondoryStatus();
         ArrayList<SecondaryStatus> NewSecondaryStatus = dummySecondoryStatus();
-        JsonNode attributes = dummyAttributes();
         String sku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
-        Inventory inventory=getInventory(attributes,existingSecondaryStatus);
+        Inventory inventory=getInventory(dummyAttributes(),existingSecondaryStatus);
         NewSecondaryStatus.add(new SecondaryStatus("legal","completed"));
         when(inventoryRepository.findInventory(sku)).thenReturn(inventory);
 
@@ -126,20 +120,15 @@ class InventoryServiceTest {
     @Test
     void ShouldUpdateInventory() throws Exception {
         String sku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
-        JsonNode attributes = dummyAttributes();
-        ArrayList<SecondaryStatus> secondaryStatus = dummySecondoryStatus();
         Map<String, Object> field = new HashMap<>();
         createUpdateField(field);
-        Inventory inventory=getInventory(attributes,secondaryStatus);
+        Inventory inventory=getInventory(dummyAttributes(),dummySecondoryStatus());
         when(inventoryRepository.findInventory(sku)).thenReturn(inventory);
 
         inventoryService.patchInventory(sku,field);
 
         verify(inventoryRepository,times(1)).saveInventory(inventory);
-
     }
-
-
 
     private static ArrayList<SecondaryStatus> dummySecondoryStatus() {
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
@@ -164,6 +153,7 @@ class InventoryServiceTest {
     private static InventoryResponse getInventoryResponse(JsonNode attributes, ArrayList<SecondaryStatus> secondaryStatus, Inventory inventory) {
         return new InventoryResponse("09d6afa5-c898-44a1-bddb-d40a4feeee81", "car", "created", "Mumbai", inventory.getCreatedAt(), inventory.getUpdatedAt(), "user", "user", attributes, 450000, secondaryStatus);
     }
+
     private static void createUpdateField(Map<String, Object> field) throws JsonProcessingException {
         field.put("status", "procured");
         field.put("costPrice", 460000f);
@@ -171,6 +161,13 @@ class InventoryServiceTest {
         ((ObjectNode) attributesValue).put("color", "red");
         ((ObjectNode) attributesValue).put("year", 2021);
         field.put("attributes", attributesValue);
+    }
+
+    private static Inventory getInventory(InventoryRequest inventoryRequest) {
+        Inventory expectedInventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(), "user",
+                "user", inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
+                inventoryRequest.getSecondaryStatus());
+        return expectedInventory;
     }
 
 }

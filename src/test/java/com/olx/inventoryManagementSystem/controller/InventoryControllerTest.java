@@ -39,16 +39,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockBean({InventoryService.class})
 @WebMvcTest(controllers = InventoryController.class)
 class InventoryControllerTest {
+
     @MockBean
     InventoryService inventoryService;
+
     @MockBean
     JwtUtil jwtUtil;
+
     @MockBean
     LoginUserService loginUserService;
+
     @MockBean
     UserRepository userRepository;
+
     @MockBean
     JPAUserRepository jpaUserRepository;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -139,7 +145,10 @@ class InventoryControllerTest {
     }
 
     private InventoryResponse dummyInventoryResponse(JsonNode attributes, ArrayList<SecondaryStatus> secondaryStatus) {
-        return new InventoryResponse("d59fdbd5-0c56-4a79-8905-6989601890be", "car", "created", "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59), LocalDateTime.of(2023, 2, 21, 22, 59), "user", "user", attributes, 450000, secondaryStatus);
+        return new InventoryResponse("d59fdbd5-0c56-4a79-8905-6989601890be", "car", "created",
+                "Mumbai", LocalDateTime.of(2023, 2, 21, 22, 59),
+                LocalDateTime.of(2023, 2, 21, 22, 59), "user",
+                "user", attributes, 450000, secondaryStatus);
     }
 
     private JsonNode dummyAttributes() {
