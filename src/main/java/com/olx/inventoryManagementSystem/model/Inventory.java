@@ -106,7 +106,6 @@ public class Inventory {
 
     public void UpdateStatus(Inventory inventory, ArrayList<SecondaryStatus> secondaryStatus) {
         ArrayList<SecondaryStatus> inventorySecondaryStatus = inventory.getSecondaryStatus();
-        System.out.println("ram");
         for (SecondaryStatus statuses : secondaryStatus) {
             if (!inventorySecondaryStatus.contains(statuses)) {
                 this.addStatus(inventory, statuses);
