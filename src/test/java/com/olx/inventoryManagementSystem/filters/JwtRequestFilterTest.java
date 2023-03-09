@@ -77,11 +77,22 @@ class JwtRequestFilterTest {
     }
 
     @Test
-    void ShouldThrowRuntimeExceptionWhenTokenIsInvalid() throws ServletException, IOException {
+    void ShouldThrowRuntimeExceptionWhenTokenNotStartWithBearer() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
         request.addHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95");
+
+        jwtFilter.doFilterInternal(request, response, filterChain);
+
+        verify(resolver, times(1)).resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
+    }
+    @Test
+    void ShouldThrowRuntimeExceptionWhenTokenisInvalid() throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
+        request.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95");
 
         jwtFilter.doFilterInternal(request, response, filterChain);
 

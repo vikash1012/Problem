@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -23,5 +24,10 @@ public class SecondaryStatus implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         SecondaryStatus that = (SecondaryStatus) o;
         return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

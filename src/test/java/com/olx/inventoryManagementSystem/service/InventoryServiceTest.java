@@ -110,14 +110,15 @@ class InventoryServiceTest {
 
     @Test
     void ShouldUpdateStatus() throws Exception {
-        ArrayList<SecondaryStatus> secondaryStatus = dummySecondoryStatus();
+        ArrayList<SecondaryStatus> existingSecondaryStatus = dummySecondoryStatus();
+        ArrayList<SecondaryStatus> NewSecondaryStatus = dummySecondoryStatus();
         JsonNode attributes = dummyAttributes();
         String sku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
-        Inventory inventory=getInventory(attributes,secondaryStatus);
-        secondaryStatus.add(new SecondaryStatus("legal","completed"));
+        Inventory inventory=getInventory(attributes,existingSecondaryStatus);
+        NewSecondaryStatus.add(new SecondaryStatus("legal","completed"));
         when(inventoryRepository.findInventory(sku)).thenReturn(inventory);
 
-        inventoryService.updateStatus(sku,secondaryStatus);
+        inventoryService.updateStatus(sku,NewSecondaryStatus);
 
         verify(inventoryRepository, times(1)).saveInventory(inventory);
     }

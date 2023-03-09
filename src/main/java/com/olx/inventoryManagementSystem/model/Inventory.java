@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -105,6 +106,7 @@ public class Inventory {
 
     public void UpdateStatus(Inventory inventory, ArrayList<SecondaryStatus> secondaryStatus) {
         ArrayList<SecondaryStatus> inventorySecondaryStatus = inventory.getSecondaryStatus();
+        System.out.println("ram");
         for (SecondaryStatus statuses : secondaryStatus) {
             if (!inventorySecondaryStatus.contains(statuses)) {
                 this.addStatus(inventory, statuses);
