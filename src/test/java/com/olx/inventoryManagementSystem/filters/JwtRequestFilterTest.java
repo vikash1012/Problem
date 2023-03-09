@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -36,6 +37,8 @@ class JwtRequestFilterTest {
     private static String jwtToken;
     private static UserDetails dummy;
     JwtRequestFilter jwtRequestFilter;
+
+    JwtRequestFilter jwtFilter;
     @Mock
     JPAUserRepository jpaUserRepository = mock(JPAUserRepository.class);
     @Mock
@@ -47,12 +50,14 @@ class JwtRequestFilterTest {
     @Mock
     WebSecurityConfig webSecurityConfig;
     @Mock
+    @Qualifier("handlerExceptionResolver")
     HandlerExceptionResolver resolver;
 
     @BeforeEach
     void setUp() {
         jwtUtil = new JwtUtil();
-        jwtRequestFilter = new JwtRequestFilter(userRepository, loginUserService, jwtUtil, resolver);
+        jwtRequestFilter = new JwtRequestFilter(userRepository, loginUserService, jwtUtil);
+        jwtFilter = new JwtRequestFilter(resolver);
         dummy = new org.springframework.security.core.userdetails.User("user@email.com", "vparimal587", new ArrayList<>());
         jwtToken = jwtUtil.generateToken(dummy);
     }
@@ -78,7 +83,7 @@ class JwtRequestFilterTest {
         MockFilterChain filterChain = new MockFilterChain();
         request.addHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImV4cCI6MTY3NzY4NzY1MSwiaWF0IjoxNjc3NjY5NjUxfQ.2UaKNDmUbgtnfdYI3WzTY4RjcboZJM9LOdGMYQqD95");
 
-        jwtRequestFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilterInternal(request, response, filterChain);
 
         verify(resolver, times(1)).resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
     }
@@ -110,11 +115,9 @@ class JwtRequestFilterTest {
         MockFilterChain filterChain = new MockFilterChain();
         request.setMethod("POST");
 
-        jwtRequestFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilterInternal(request, response, filterChain);
 
         verify(resolver, times(1)).resolveException(request, response, null, new ForbiddenRequestException("Forbidden Request"));
-
-
 
     }
 }

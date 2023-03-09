@@ -37,11 +37,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 
     @Autowired(required = false)
-    public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService, JwtUtil jwtUtil,HandlerExceptionResolver resolver) {
+    public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.loginUserService = loginUserService;
         this.jwtUtil = jwtUtil;
-        this.resolver=resolver;
+        //this.resolver=resolver;
+    }
+
+    @Autowired(required = false)
+    public JwtRequestFilter(HandlerExceptionResolver resolver) {
+        this.resolver = resolver;
     }
 
     @Override

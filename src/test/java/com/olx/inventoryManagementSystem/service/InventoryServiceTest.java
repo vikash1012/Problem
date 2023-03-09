@@ -40,8 +40,6 @@ class InventoryServiceTest {
     ArgumentCaptor<Inventory> inventoryCaptor;
 
 
-
-
     @BeforeEach
     void setup() {
         inventoryService = new InventoryService(inventoryRepository);
@@ -116,13 +114,12 @@ class InventoryServiceTest {
         JsonNode attributes = dummyAttributes();
         String sku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         Inventory inventory=getInventory(attributes,secondaryStatus);
+        secondaryStatus.add(new SecondaryStatus("legal","completed"));
         when(inventoryRepository.findInventory(sku)).thenReturn(inventory);
 
         inventoryService.updateStatus(sku,secondaryStatus);
 
         verify(inventoryRepository, times(1)).saveInventory(inventory);
-
-
     }
 
     @Test

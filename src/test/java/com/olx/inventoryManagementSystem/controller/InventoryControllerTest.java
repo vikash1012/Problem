@@ -1,5 +1,6 @@
 package com.olx.inventoryManagementSystem.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -126,7 +127,7 @@ class InventoryControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    private static Map<String, Object> dummyAttributesMap() {
+    private static Map<String, Object> dummyAttributesMap(){
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("status", "procured");
         map.put("costPrice", 460000);

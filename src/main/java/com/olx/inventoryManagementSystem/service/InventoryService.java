@@ -90,8 +90,6 @@ public class InventoryService {
             if (!key.equals("attributes")) {
                 setFields(inventory, (Object) value, foundField);
                 return;
-
-
             }
             updateAttributes(inventory, value, foundField);
             setFields(inventory, (Object) value, foundField);
