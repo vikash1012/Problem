@@ -64,7 +64,7 @@ class UserControllerTests {
     }
 
     @Test
-    @BeforeTestMethod
+    @BeforeTestMethod // TODO: why is this??
     void ShouldReturnLoginResponse() throws Exception {
         UserDetails dummy = new org.springframework.security.core.userdetails.User("user@email.com", "123456", new ArrayList<>());
         LoginResponse loginResponse = new LoginResponse(jwtUtil.generateToken(dummy));

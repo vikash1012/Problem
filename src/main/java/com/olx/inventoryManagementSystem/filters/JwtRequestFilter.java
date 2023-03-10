@@ -40,6 +40,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
+    // TODO: do not change code for the testing purpose! do not add autowired false for testing
+    // TODO: do not use lazy!
     @Autowired(required = false)
     public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -54,12 +56,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+         // TODO: magic string!!
         final String authorizationHeader = request.getHeader("Authorization");
         if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
         if (!authorizationHeader.startsWith(BEARER)) {
             resolver.resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
             return;
         }
+        // TODO: inline variables
         String jwt = authorizationHeader.substring(7);
         String email = getEmail(jwt, request, response);
         validateToken(request, email, jwt);
@@ -67,9 +71,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private void validateToken(HttpServletRequest request, String email, String jwt) {
+        // TODO: remove checks which are not required.
         if (email == null) {
             return;
         }
+
+        // TODO: check if securiry context holder is required or not
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
             return;
         }
@@ -78,8 +85,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, null,
-                        userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
@@ -89,19 +95,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             email = jwtUtil.extractEmail(jwt);
         } catch (Exception e) {
+            // TODO : do not catch EXCEPTION at the top level.
             resolver.resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
-
         }
         return email;
     }
 
     private boolean isRequestPermittedWithNoAuthorizationHeader(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // TODO: DRY
+        // TODO: Magic strings
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
             return false;
         }
         if (!isPermitted(request)) {
+            // TODO: Magic strings
             resolver.resolveException(request, response, null, new ForbiddenRequestException("Forbidden Request"));
             return true;
         }
@@ -110,7 +119,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isPermitted(HttpServletRequest request) {
-        return request.getRequestURI().equals("/users/register") || request.getRequestURI().equals("/users/login");
+        // TODO: Magic strings
+        // TODO: Map of urls which are allowed
+        return request.getRequestURI().equals("/users/register") || request.getRequestURI().equals("/users/login")
+                || request.getRequestURI().contains("swagger-ui") || request.getRequestURI().contains("api-docs");
     }
 }
 

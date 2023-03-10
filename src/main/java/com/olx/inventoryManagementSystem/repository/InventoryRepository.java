@@ -19,6 +19,7 @@ public class InventoryRepository {
         this.jpaInventoryRepository = jpaInventoryRepository;
     }
 
+    // TODO: rename methods, remove suffixes.
     public String createInventory(Inventory inventory) {
         return this.jpaInventoryRepository.save(inventory).getSku();
     }

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 @Service
 public class LoginUserService implements UserDetailsService {
 
+    // TODO : DO NOT USE LAZY
+
     @Lazy
     @Autowired
     UserRepository userRepository;
@@ -32,6 +34,7 @@ public class LoginUserService implements UserDetailsService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // TODO: remove multiple constructor for testing and remove required false
     @Autowired(required = false)
     public LoginUserService(@Lazy UserRepository userRepository, @Lazy WebSecurityConfig webSecurityConfig, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -46,6 +49,7 @@ public class LoginUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.userExistByEmail(username);
+        // TODO: user respository should return Optional<User>
         if (user == null) {
             throw new UsernameNotFoundException(username + " not found.");
         }
@@ -55,6 +59,7 @@ public class LoginUserService implements UserDetailsService {
 
     public LoginResponse createAuthenticationToken(UserRequest userRequest) throws InvalidLoginCredential {
         authenticateUser(userRequest);
+        // TODO inline variables
         UserDetails userDetails = loadUserByUsername(userRequest.getEmail());
         String jwt = jwtUtil.generateToken(userDetails);
         return new LoginResponse(jwt);
@@ -65,6 +70,7 @@ public class LoginUserService implements UserDetailsService {
             webSecurityConfig.authenticationManager().authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),
                     userRequest.getPassword()));
         } catch (Exception e) {
+            // TODO: proper exception handling
             throw new InvalidLoginCredential("Invalid Login Credential");
         }
     }

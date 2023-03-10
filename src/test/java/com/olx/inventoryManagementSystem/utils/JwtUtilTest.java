@@ -6,8 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 class JwtUtilTest {
@@ -45,15 +44,14 @@ class JwtUtilTest {
     void ShouldReturnGeneratedToken() {
         String actualToken = jwtUtil.generateToken(userDetails);
 
-        assertTrue(!actualToken.isEmpty());
+        assertFalse(actualToken.isEmpty());
     }
 
+    // TODO: test cases are just for the coverage not for the usecase
     @Test
     void ShouldReturnFalseWhenTokenIsInvalid() {
-        Boolean expectedBool = false;
-
         Boolean actualBool = jwtUtil.validateToken(jwtToken, userDetails);
 
-        assertEquals(expectedBool, actualBool);
+        assertFalse(actualBool);
     }
 }

@@ -1,6 +1,5 @@
 package com.olx.inventoryManagementSystem.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,13 +24,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,26 +84,33 @@ class InventoryControllerTest {
     void ShouldFetchListOfInventoriesFromGetInventoriesApi() throws Exception {
         List<InventoryResponse> expectedInventories = List.of(dummyInventoryResponse(dummyAttributes(), dummyStatuses()));
         when(inventoryService.getInventories(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku"))))).thenReturn(expectedInventories);
-        String expectedResponse = new String(Files.readAllBytes(Paths.get("src/test/java/com/olx/inventoryManagementSystem/controller/testData/InventoriesResponse.json")));
+        String expectedResponse = new String(parseFile("src/test/java/com/olx/inventoryManagementSystem/controller/testData/InventoriesResponse.json"));
 
         MockHttpServletRequestBuilder request = get("/inventories");
 
         this.mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().string(expectedResponse.replace("\n", "").replace(" ","")));
+                .andExpect(content().string(expectedResponse.replace("\n", "").replace(" ", "")));
         verify(inventoryService, times(1)).getInventories(PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku"))));
+    }
+
+    // TODO: check this out
+    private String parseFile(String path) throws IOException {
+        String stringContent = new String(Files.readAllBytes(Paths.get(path)));
+        stringContent = stringContent.replace("\n", "").replace(" ","");
+        return stringContent;
     }
 
     @Test
     void ShouldFetchInventoryFromGetApiForParticularSku() throws Exception {
         when(inventoryService.getInventory("d59fdbd5-0c56-4a79-8905-6989601890be")).thenReturn(dummyInventoryResponse(dummyAttributes(), dummyStatuses()));
-        String expectedResponse = new String(Files.readAllBytes(Paths.get("src/test/java/com/olx/inventoryManagementSystem/controller/testData/InventoryResponse.json")));
+        String expectedResponse = parseFile("src/test/java/com/olx/inventoryManagementSystem/controller/testData/InventoryResponse.json");
 
         MockHttpServletRequestBuilder requestWithSku = get("/inventories/d59fdbd5-0c56-4a79-8905-6989601890be");
 
         this.mockMvc.perform(requestWithSku)
                 .andExpect(status().isOk())
-                .andExpect(content().string(expectedResponse.replace("\n", "").replace(" ","")));
+                .andExpect(content().string(expectedResponse));
         verify(inventoryService, times(1)).getInventory("d59fdbd5-0c56-4a79-8905-6989601890be");
     }
 

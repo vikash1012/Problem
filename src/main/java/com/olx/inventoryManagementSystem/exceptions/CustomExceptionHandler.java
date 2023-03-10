@@ -52,4 +52,11 @@ public class CustomExceptionHandler {
         final ExceptionResponse exceptionResponse = new ExceptionResponse("Forbidden", ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
+
+    // TODO: write unknown exception handler
+//    @ExceptionHandler({Exception.class})
+//    public ResponseEntity<Object> handlerForbiddenRequestException(ForbiddenRequestException ex) {
+//        final ExceptionResponse exceptionResponse = new ExceptionResponse("Unknown Error", ex.getMessage());
+//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 }

@@ -25,7 +25,6 @@ public class InventoryService {
     InventoryRepository inventoryRepository;
 
     private final static String CAR_TYPE = "car";
-
     private final static String BIKE_TYPE = "bike";
 
     @Autowired
@@ -35,6 +34,7 @@ public class InventoryService {
 
     public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
         isAcceptableInventoryType(inventoryRequest.getType());
+        // TODO: created and updated at should be based on user.
         Inventory inventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(), "user",
                 "user", (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
                 inventoryRequest.getSecondaryStatus());
@@ -53,6 +53,7 @@ public class InventoryService {
         List<InventoryResponse> listOfGetResponses = new ArrayList<>();
         Page<Inventory> listOfInventories = this.inventoryRepository.fetchInventories(pageable);
         for (Inventory inventory : listOfInventories) {
+            // TODO: DRY
             InventoryResponse inventoryDetails = new InventoryResponse(inventory.getSku(), inventory.getType(),
                     inventory.getStatus(), inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(),
                     inventory.getCreatedBy(), inventory.getUpdatedBy(), inventory.getAttributes(),

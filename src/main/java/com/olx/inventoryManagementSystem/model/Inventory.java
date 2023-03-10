@@ -6,10 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.stereotype.Component;
@@ -35,11 +32,10 @@ public class Inventory {
     private int id;
 
     private String sku;
-
     private String type;
 
+    // TODO: values should be part of constructor
     private String status = "created";
-
     private String location;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -74,6 +70,7 @@ public class Inventory {
 
     public Inventory(String type, String location, String createdBy, String updatedBy, Object attributes,
                      float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
+        // TODO: inline variables
         UUID sku = UUID.randomUUID();
         LocalDateTime localDateTime = LocalDateTime.now();
         this.sku = sku.toString();
@@ -88,6 +85,7 @@ public class Inventory {
         this.secondaryStatus = secondaryStatus;
     }
 
+    // TODO: NEVER MAKE CODE CHANGES FOR TEST IN YOUR PRODUCTION CODE
     public Inventory(String sku, String type, String location, String createdBy, String updatedBy, Object attributes, float costPrice, float soldAt, ArrayList<SecondaryStatus> secondaryStatus) {
         this.sku = sku;
         this.id = 7;

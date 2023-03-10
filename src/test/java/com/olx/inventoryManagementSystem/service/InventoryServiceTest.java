@@ -20,7 +20,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +37,7 @@ class InventoryServiceTest {
 
 
     InventoryService inventoryService;
+
     @Captor
     ArgumentCaptor<Inventory> inventoryCaptor;
 
@@ -56,7 +60,7 @@ class InventoryServiceTest {
 
         assertThat(actualInventory)
                 .usingRecursiveComparison()
-                .ignoringFields("sku", "createdAt", "updatedAt", "id")
+                .ignoringFields("sku", "createdAt", "updatedAt", "id") // TODO: why ignoring id?
                 .isEqualTo(expectedInventory);
         assertEquals(expectedSku, actualSku);
         verify(inventoryRepository, times(1)).createInventory(actualInventory);
@@ -76,12 +80,10 @@ class InventoryServiceTest {
 
     @Test
     void ShouldReturnListOfInventories() {
-        JsonNode attributes = dummyAttributes();
-        ArrayList<SecondaryStatus> secondaryStatus = dummySecondoryStatus();
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku")));
-        Inventory inventory = getInventory(attributes, secondaryStatus);
+        Inventory inventory = getInventory(dummyAttributes(), dummySecondoryStatus());
         Page<Inventory> fetchedInventories = new PageImpl<>(List.of(inventory));
-        List<InventoryResponse> expectedInventories = List.of(getInventoryResponse(attributes, secondaryStatus, inventory));
+        List<InventoryResponse> expectedInventories = List.of(getInventoryResponse(dummyAttributes(), dummySecondoryStatus(), inventory));
         when(inventoryRepository.fetchInventories(pageable)).thenReturn(fetchedInventories);
 
         List<InventoryResponse> actualInventories = inventoryService.getInventories(pageable);

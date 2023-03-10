@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     @Autowired
     UserService userService;
+
     @Autowired
     private LoginUserService loginUserService;
 
+    // TODO: should only one one constructor and autowired should not be false!
     @Autowired(required = false)
     public UserController(UserService userService) {
         this.userService = userService;
@@ -34,6 +36,7 @@ public class UserController {
     @PostMapping("/users/register")
     public ResponseEntity<RegistrationResponse> createUser(@RequestBody UserRequest userRequest) throws UserAlreadyExistsException {
         this.userService.createUser(userRequest);
+        // TODO: do not use magic strings and constants
         return new ResponseEntity<>(new RegistrationResponse("User Successfully Registered"), HttpStatus.CREATED);
     }
 

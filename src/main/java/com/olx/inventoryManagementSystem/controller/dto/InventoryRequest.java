@@ -13,13 +13,9 @@ import java.util.ArrayList;
 public class InventoryRequest {
 
     String type;
-
     String location;
-
     JsonNode attributes;
-
     float costPrice;
-
     ArrayList<SecondaryStatus> secondaryStatus;
 
 }
