@@ -1,0 +1,38 @@
+{
+  "sku": "d59fdbd5-0c56-4a79-8905-6989601890be",
+  "type": "car",
+  "status": "created",
+  "location": "Mumbai",
+  "createdAt": [
+    2023,
+    2,
+    21,
+    22,
+    59
+],
+  "updatedAt": [
+    2023,
+    2,
+    21,
+    22,
+    59
+  ],
+  "createdBy": "user",
+  "updatedBy": "user",
+  "attributes": {
+    "vin": "AP31CM9873",
+    "make": "Tata",
+    "model": "Nexon"
+  },
+  "costPrice": 450000.0,
+  "secondaryStatus": [
+    {
+      "name": "warehouse",
+      "status": "in-repair"
+    },
+    {
+      "name": "transit",
+      "status": "in-progress"
+    }
+  ]
+}
