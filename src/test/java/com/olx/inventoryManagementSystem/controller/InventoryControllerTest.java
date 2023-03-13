@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryRequest;
 import com.olx.inventoryManagementSystem.controller.dto.InventoryResponse;
 import com.olx.inventoryManagementSystem.controller.dto.SecondaryStatus;
+import com.olx.inventoryManagementSystem.filters.JwtRequestFilter;
 import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.service.InventoryService;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
+import com.olx.inventoryManagementSystem.utils.LoadByUsername;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockBean({InventoryService.class})
 @WebMvcTest(controllers = InventoryController.class)
 class InventoryControllerTest {
-
+    InventoryController inventoryController;
     @MockBean
     InventoryService inventoryService;
 
@@ -54,12 +59,27 @@ class InventoryControllerTest {
     @MockBean
     JPAUserRepository jpaUserRepository;
 
+    @MockBean
+    JwtRequestFilter jwtRequestFilter;
+    @MockBean
+    LoadByUsername loadByUsername;
     @Autowired
     private MockMvc mockMvc;
 
+    private static Map<String, Object> dummyAttributesMap() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("status", "procured");
+        map.put("costPrice", 460000);
+        JsonNode attributesValue = new ObjectMapper().createObjectNode();
+        ((ObjectNode) attributesValue).put("color", "red");
+        ((ObjectNode) attributesValue).put("year", 2021);
+        map.put("attributes", attributesValue);
+        return map;
+    }
+
     @BeforeEach
     public void init() {
-        InventoryController inventoryController = new InventoryController(inventoryService);
+        this.inventoryController = new InventoryController(inventoryService);
         this.mockMvc = MockMvcBuilders.standaloneSetup(inventoryController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
@@ -97,7 +117,7 @@ class InventoryControllerTest {
     // TODO: check this out
     private String parseFile(String path) throws IOException {
         String stringContent = new String(Files.readAllBytes(Paths.get(path)));
-        stringContent = stringContent.replace("\n", "").replace(" ","");
+        stringContent = stringContent.replace("\n", "").replace(" ", "");
         return stringContent;
     }
 
@@ -137,17 +157,6 @@ class InventoryControllerTest {
 
         this.mockMvc.perform(patchRequest)
                 .andExpect(status().isNoContent());
-    }
-
-    private static Map<String, Object> dummyAttributesMap(){
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("status", "procured");
-        map.put("costPrice", 460000);
-        JsonNode attributesValue = new ObjectMapper().createObjectNode();
-        ((ObjectNode) attributesValue).put("color", "red");
-        ((ObjectNode) attributesValue).put("year", 2021);
-        map.put("attributes", attributesValue);
-        return map;
     }
 
     private InventoryResponse dummyInventoryResponse(JsonNode attributes, ArrayList<SecondaryStatus> secondaryStatus) {

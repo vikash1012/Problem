@@ -1,5 +1,6 @@
 package com.olx.inventoryManagementSystem.utils;
 
+import com.olx.inventoryManagementSystem.exceptions.UserNameNotFoundException;
 import com.olx.inventoryManagementSystem.model.User;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Component
 public class LoadByUsername implements UserDetailsService {
@@ -21,12 +23,12 @@ public class LoadByUsername implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.userExistByEmail(username);
-        // TODO: user respository should return Optional<User>
-        if (user == null) {
-            throw new UsernameNotFoundException(username + " not found.");
+        Optional<User> user=userRepository.userExistByEmail(username);
+        if(user.isEmpty()){
+            throw new UsernameNotFoundException("User is Invalid");
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+
+        return new org.springframework.security.core.userdetails.User(user.get().getEmail(), user.get().getPassword(),
                 new ArrayList<>());
     }
 

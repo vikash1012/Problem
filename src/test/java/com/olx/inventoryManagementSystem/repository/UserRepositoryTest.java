@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -25,10 +27,9 @@ class UserRepositoryTest {
     @Test
     void ShouldReturnUserWhenEmailIsGiven() {
         String email = "user@email.com";
-        User expectedUser = new User("user@email.com", "124");
+        Optional<User> expectedUser = Optional.of(new User("user@email.com", "124"));
         when(jpaUserRepository.findByEmail(email)).thenReturn(expectedUser);
-
-        User actualUser = userRepository.userExistByEmail(email);
+        Optional<User> actualUser = userRepository.userExistByEmail(email);
 
         assertEquals(expectedUser, actualUser);
         verify(jpaUserRepository, times(1)).findByEmail(email);

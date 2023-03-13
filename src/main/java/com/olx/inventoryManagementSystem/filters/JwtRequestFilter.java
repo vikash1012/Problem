@@ -43,7 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private HandlerExceptionResolver resolver;
 
     @Autowired
-    public JwtRequestFilter( UserRepository userRepository, LoadByUsername loadByUsername, JwtUtil jwtUtil,@Qualifier("handlerExceptionResolver")HandlerExceptionResolver resolver) {
+    public JwtRequestFilter( UserRepository userRepository, LoadByUsername loadByUsername, JwtUtil jwtUtil, @Qualifier("handlerExceptionResolver")HandlerExceptionResolver resolver) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.loadByUsername = loadByUsername;
