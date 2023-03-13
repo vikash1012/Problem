@@ -57,7 +57,7 @@ class UserControllerTests {
 
     @BeforeEach
     public void init() {
-        UserController userController = new UserController(loginUserService);
+        UserController userController = new UserController(userService,loginUserService);
         this.mockMvc = MockMvcBuilders.standaloneSetup(userController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();

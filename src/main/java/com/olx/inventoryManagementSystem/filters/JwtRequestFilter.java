@@ -1,13 +1,15 @@
 package com.olx.inventoryManagementSystem.filters;
 
 import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
+import com.olx.inventoryManagementSystem.exceptions.InternalServerException;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
+import com.olx.inventoryManagementSystem.utils.LoadByUsername;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,64 +28,57 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final static String BEARER = "Bearer ";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String TOKEN_IS_INVALID = "Token is Invalid";
+    public static final String FORBIDDEN_REQUEST = "Forbidden Request";
+    public static final String INTERNAL_SERVER_ERROR = "Internal Server error";
 
-    @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    JwtUtil jwtUtil;
 
-    @Autowired
-    private LoginUserService loginUserService;
+    LoadByUsername loadByUsername;
 
-    @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
-    // TODO: do not change code for the testing purpose! do not add autowired false for testing
-    // TODO: do not use lazy!
-    @Autowired(required = false)
-    public JwtRequestFilter(@Lazy UserRepository userRepository, LoginUserService loginUserService, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.loginUserService = loginUserService;
+    @Autowired
+    public JwtRequestFilter( UserRepository userRepository, LoadByUsername loadByUsername, JwtUtil jwtUtil,@Qualifier("handlerExceptionResolver")HandlerExceptionResolver resolver) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+        this.loadByUsername = loadByUsername;
+        this.resolver=resolver;
     }
 
-    @Autowired(required = false)
-    public JwtRequestFilter(HandlerExceptionResolver resolver) {
-        this.resolver = resolver;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-         // TODO: magic string!!
-        final String authorizationHeader = request.getHeader("Authorization");
-        if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
-        if (!authorizationHeader.startsWith(BEARER)) {
-            resolver.resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
+        if(isPermitted(request)){
+            filterChain.doFilter(request,response);
             return;
         }
-        // TODO: inline variables
-        String jwt = authorizationHeader.substring(7);
-        String email = getEmail(jwt, request, response);
-        validateToken(request, email, jwt);
+        if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
+        if (!getHeader(request).startsWith(BEARER)) {
+            resolver.resolveException(request, response, null, new InvalidTokenException(TOKEN_IS_INVALID));
+            return;
+        }
+
+        String email = getEmail(getHeader(request).substring(7), request, response);
+        if(email==null){
+            return;
+        }
+        validateToken(request, email);
+        System.out.println(email);
         filterChain.doFilter(request, response);
     }
 
-    private void validateToken(HttpServletRequest request, String email, String jwt) {
-        // TODO: remove checks which are not required.
-        if (email == null) {
-            return;
-        }
+    private static String getHeader(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION);
+    }
 
-        // TODO: check if securiry context holder is required or not
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            return;
-        }
-        UserDetails userDetails = this.loginUserService.loadUserByUsername(email);
-        if (!jwtUtil.validateToken(jwt, userDetails)) {
-            return;
-        }
+    private void validateToken(HttpServletRequest request, String email) {
+
+        UserDetails userDetails = this.loadByUsername.loadUserByUsername(email);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -94,24 +89,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String email = null;
         try {
             email = jwtUtil.extractEmail(jwt);
-        } catch (Exception e) {
-            // TODO : do not catch EXCEPTION at the top level.
-            resolver.resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
+        } catch (SignatureException e) {
+            resolver.resolveException(request, response, null, new InvalidTokenException(TOKEN_IS_INVALID));
+        } catch(Exception e){
+            resolver.resolveException(request,response,null,new InternalServerException(INTERNAL_SERVER_ERROR));
         }
         return email;
     }
 
     private boolean isRequestPermittedWithNoAuthorizationHeader(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // TODO: DRY
-        // TODO: Magic strings
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
+        if (getHeader(request) != null) {
             return false;
         }
         if (!isPermitted(request)) {
-            // TODO: Magic strings
-            resolver.resolveException(request, response, null, new ForbiddenRequestException("Forbidden Request"));
+            resolver.resolveException(request, response, null, new ForbiddenRequestException(FORBIDDEN_REQUEST));
             return true;
         }
         filterChain.doFilter(request, response);
@@ -125,5 +117,3 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 || request.getRequestURI().contains("swagger-ui") || request.getRequestURI().contains("api-docs");
     }
 }
-
-
