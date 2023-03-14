@@ -22,7 +22,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<ExceptionResponse> exceptionResponses = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String errorMessage = ((FieldError) error).getField()+" "+error.getDefaultMessage();
+            String errorMessage = ((FieldError) error).getField() + " " + error.getDefaultMessage();
             exceptionResponses.add(new ExceptionResponse("InvalidRequest", errorMessage));
         });
         return new ResponseEntity<>(exceptionResponses, new HttpHeaders(), HttpStatus.BAD_REQUEST);
@@ -70,10 +70,10 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler({InternalServerException.class})
-    public ResponseEntity<Object> handlerInternalServerException(InternalServerException ex) {
-        final ExceptionResponse exceptionResponse = new ExceptionResponse("Unknown Error", ex.getMessage());
-        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler({TokenExpiredException.class})
+    public ResponseEntity<Object> handlerTokenExpiredException(TokenExpiredException ex) {
+        final ExceptionResponse exceptionResponse = new ExceptionResponse("Expired", ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({Exception.class})

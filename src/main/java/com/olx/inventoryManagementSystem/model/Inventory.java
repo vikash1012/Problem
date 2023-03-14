@@ -23,9 +23,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Component
+@AllArgsConstructor
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Inventory {
 
+    public static final String CREATED = "created";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")
@@ -33,9 +35,7 @@ public class Inventory {
 
     private String sku;
     private String type;
-
-    // TODO: values should be part of constructor
-    private String status = "created";
+    private String status;
     private String location;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -70,11 +70,10 @@ public class Inventory {
 
     public Inventory(String type, String location, String createdBy, String updatedBy, Object attributes,
                      float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
-        // TODO: inline variables
-        UUID sku = UUID.randomUUID();
         LocalDateTime localDateTime = LocalDateTime.now();
-        this.sku = sku.toString();
+        this.sku = UUID.randomUUID().toString();
         this.type = type;
+        this.status = CREATED;
         this.location = location;
         this.createdAt = localDateTime;
         this.updatedAt = localDateTime;
@@ -82,22 +81,6 @@ public class Inventory {
         this.updatedBy = updatedBy;
         this.attributes = attributes;
         this.costPrice = costPrice;
-        this.secondaryStatus = secondaryStatus;
-    }
-
-    // TODO: NEVER MAKE CODE CHANGES FOR TEST IN YOUR PRODUCTION CODE
-    public Inventory(String sku, String type, String location, String createdBy, String updatedBy, Object attributes, float costPrice, float soldAt, ArrayList<SecondaryStatus> secondaryStatus) {
-        this.sku = sku;
-        this.id = 7;
-        this.type = type;
-        this.location = location;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.attributes = attributes;
-        this.costPrice = costPrice;
-        this.soldAt = soldAt;
         this.secondaryStatus = secondaryStatus;
     }
 

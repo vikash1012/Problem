@@ -1,12 +1,12 @@
 package com.olx.inventoryManagementSystem.filters;
 
 import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
-import com.olx.inventoryManagementSystem.exceptions.InternalServerException;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
+import com.olx.inventoryManagementSystem.exceptions.TokenExpiredException;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
-import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import com.olx.inventoryManagementSystem.utils.LoadByUsername;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,11 +27,15 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
+    public static final String REGISTER_URL = "/users/register";
     private final static String BEARER = "Bearer ";
     public static final String AUTHORIZATION = "Authorization";
     public static final String TOKEN_IS_INVALID = "Token is Invalid";
     public static final String FORBIDDEN_REQUEST = "Forbidden Request";
-    public static final String INTERNAL_SERVER_ERROR = "Internal Server error";
+    public static final String LOGIN_URL = "/users/login";
+    public static final String SWAGGER_UI = "swagger-ui";
+    public static final String API_DOCS = "api-docs";
+    public static final String TOKEN_IS_EXPIRED = "Token is expired";
 
     UserRepository userRepository;
 
@@ -43,18 +47,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private HandlerExceptionResolver resolver;
 
     @Autowired
-    public JwtRequestFilter( UserRepository userRepository, LoadByUsername loadByUsername, JwtUtil jwtUtil,@Qualifier("handlerExceptionResolver")HandlerExceptionResolver resolver) {
+    public JwtRequestFilter(UserRepository userRepository, LoadByUsername loadByUsername, JwtUtil jwtUtil, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.loadByUsername = loadByUsername;
-        this.resolver=resolver;
+        this.resolver = resolver;
     }
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(isPermitted(request)){
-            filterChain.doFilter(request,response);
+        if (isPermitted(request)) {
+            filterChain.doFilter(request, response);
             return;
         }
         if (isRequestPermittedWithNoAuthorizationHeader(request, response, filterChain)) return;
@@ -64,7 +68,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         String email = getEmail(getHeader(request).substring(7), request, response);
-        if(email==null){
+        if (email == null) {
             return;
         }
         validateToken(request, email);
@@ -89,10 +93,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String email = null;
         try {
             email = jwtUtil.extractEmail(jwt);
+        } catch (ExpiredJwtException e) {
+            resolver.resolveException(request, response, null, new TokenExpiredException(TOKEN_IS_EXPIRED));
         } catch (SignatureException e) {
             resolver.resolveException(request, response, null, new InvalidTokenException(TOKEN_IS_INVALID));
-        } catch(Exception e){
-            resolver.resolveException(request,response,null,new InternalServerException(INTERNAL_SERVER_ERROR));
+        } catch (Exception e) {
+            resolver.resolveException(request, response, null, new Exception(e.getMessage()));
         }
         return email;
     }
@@ -111,9 +117,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isPermitted(HttpServletRequest request) {
-        // TODO: Magic strings
         // TODO: Map of urls which are allowed
-        return request.getRequestURI().equals("/users/register") || request.getRequestURI().equals("/users/login")
-                || request.getRequestURI().contains("swagger-ui") || request.getRequestURI().contains("api-docs");
+        return request.getRequestURI().equals(REGISTER_URL) || request.getRequestURI().equals(LOGIN_URL)
+                || request.getRequestURI().contains(SWAGGER_UI) || request.getRequestURI().contains(API_DOCS);
     }
 }

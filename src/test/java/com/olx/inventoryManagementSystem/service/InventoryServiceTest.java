@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,17 +54,17 @@ class InventoryServiceTest {
         String expectedSku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         InventoryRequest inventoryRequest = new InventoryRequest("bike", "mumbai", dummyAttributes(), 450000, dummySecondoryStatus());
         Inventory expectedInventory = getInventory(inventoryRequest);
-        when(inventoryRepository.createInventory(inventoryCaptor.capture())).thenReturn("09d6afa5-c898-44a1-bddb-d40a4feeee81");
+        when(inventoryRepository.create(inventoryCaptor.capture())).thenReturn("09d6afa5-c898-44a1-bddb-d40a4feeee81");
 
         String actualSku = inventoryService.createInventory(inventoryRequest);
         Inventory actualInventory = inventoryCaptor.getValue();
 
         assertThat(actualInventory)
                 .usingRecursiveComparison()
-                .ignoringFields("sku", "createdAt", "updatedAt", "id") // TODO: why ignoring id?
+                .ignoringFields("sku", "createdAt", "updatedAt")
                 .isEqualTo(expectedInventory);
         assertEquals(expectedSku, actualSku);
-        verify(inventoryRepository, times(1)).createInventory(actualInventory);
+        verify(inventoryRepository, times(1)).create(actualInventory);
     }
 
     @Test
@@ -84,12 +85,11 @@ class InventoryServiceTest {
         Inventory inventory = getInventory(dummyAttributes(), dummySecondoryStatus());
         Page<Inventory> fetchedInventories = new PageImpl<>(List.of(inventory));
         List<InventoryResponse> expectedInventories = List.of(getInventoryResponse(dummyAttributes(), dummySecondoryStatus(), inventory));
-        when(inventoryRepository.fetchInventories(pageable)).thenReturn(fetchedInventories);
+        when(inventoryRepository.fetch(pageable)).thenReturn(fetchedInventories);
 
         List<InventoryResponse> actualInventories = inventoryService.getInventories(pageable);
 
         assertEquals(expectedInventories, actualInventories);
-
     }
 
     @Test
@@ -98,7 +98,7 @@ class InventoryServiceTest {
         JsonNode attributes = dummyAttributes();
         Inventory inventory = getInventory(attributes, secondaryStatus);
         InventoryResponse expectedInventory = getInventoryResponse(attributes, secondaryStatus, inventory);
-        when(inventoryRepository.findInventory("09d6afa5-c898-44a1-bddb-d40a4feeee81")).thenReturn(inventory);
+        when(inventoryRepository.find("09d6afa5-c898-44a1-bddb-d40a4feeee81")).thenReturn(inventory);
 
         InventoryResponse actualInventory = inventoryService.getInventory("09d6afa5-c898-44a1-bddb-d40a4feeee81");
 
@@ -112,11 +112,11 @@ class InventoryServiceTest {
         String sku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         Inventory inventory=getInventory(dummyAttributes(),existingSecondaryStatus);
         NewSecondaryStatus.add(new SecondaryStatus("legal","completed"));
-        when(inventoryRepository.findInventory(sku)).thenReturn(inventory);
+        when(inventoryRepository.find(sku)).thenReturn(inventory);
 
         inventoryService.updateStatus(sku,NewSecondaryStatus);
 
-        verify(inventoryRepository, times(1)).saveInventory(inventory);
+        verify(inventoryRepository, times(1)).save(inventory);
     }
 
     @Test
@@ -125,11 +125,11 @@ class InventoryServiceTest {
         Map<String, Object> field = new HashMap<>();
         createUpdateField(field);
         Inventory inventory=getInventory(dummyAttributes(),dummySecondoryStatus());
-        when(inventoryRepository.findInventory(sku)).thenReturn(inventory);
+        when(inventoryRepository.find(sku)).thenReturn(inventory);
 
         inventoryService.patchInventory(sku,field);
 
-        verify(inventoryRepository,times(1)).saveInventory(inventory);
+        verify(inventoryRepository,times(1)).save(inventory);
     }
 
     private static ArrayList<SecondaryStatus> dummySecondoryStatus() {
@@ -148,7 +148,8 @@ class InventoryServiceTest {
     }
 
     private static Inventory getInventory(JsonNode attributes, ArrayList<SecondaryStatus> secondaryStatus) {
-        Inventory inventory = new Inventory("09d6afa5-c898-44a1-bddb-d40a4feeee81", "car", "Mumbai", "user", "user", attributes, 450000f, 0f, secondaryStatus);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Inventory inventory = new Inventory(30,"09d6afa5-c898-44a1-bddb-d40a4feeee81", "car","created", "Mumbai", localDateTime,localDateTime,"user", "user", attributes, 450000f, 0f, secondaryStatus);
         return inventory;
     }
 

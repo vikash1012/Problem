@@ -9,9 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Component
 public class LoadByUsername implements UserDetailsService {
+    public static final String NOT_FOUND = " not found.";
     UserRepository userRepository;
 
     @Autowired
@@ -20,13 +22,12 @@ public class LoadByUsername implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.userExistByEmail(username);
-        // TODO: user respository should return Optional<User>
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.ExistByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(username + " not found.");
+            throw new UsernameNotFoundException(email + NOT_FOUND);
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(user.get().getEmail(), user.get().getPassword(),
                 new ArrayList<>());
     }
 

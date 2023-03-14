@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+    public static final String USER_ALREADY_EXISTS = "User Already Exists";
     UserRepository userRepository;
     WebSecurityConfig webSecurityConfig;
 
@@ -20,10 +21,10 @@ public class UserService {
     }
 
     public String createUser(UserRequest userRequest) throws UserAlreadyExistsException {
-        if (userRepository.userExistByEmail(userRequest.getEmail()) != null) {
-            throw new UserAlreadyExistsException("User Already Exists");
+        if (userRepository.ExistByEmail(userRequest.getEmail()) != null) {
+            throw new UserAlreadyExistsException(USER_ALREADY_EXISTS);
         }
         User user = new User(userRequest.getEmail(), (webSecurityConfig.passwordEncoder().encode(userRequest.getPassword())));
-        return this.userRepository.createUser(user);
+        return this.userRepository.create(user);
     }
 }

@@ -25,7 +25,7 @@ public class UserController {
     @Autowired
     public UserController(UserService userService, LoginUserService loginUserService) {
         this.userService = userService;
-        this.loginUserService=loginUserService;
+        this.loginUserService = loginUserService;
     }
 
     @PostMapping("/users/register")
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<LoginResponse> createAuthenticationToken(@Valid @RequestBody UserRequest userRequest) throws InvalidLoginCredential {
+    public ResponseEntity<LoginResponse> createAuthenticationToken(@Valid @RequestBody UserRequest userRequest) throws Exception{
         return new ResponseEntity<>(this.loginUserService.createAuthenticationToken(userRequest), HttpStatus.CREATED);
     }
 }

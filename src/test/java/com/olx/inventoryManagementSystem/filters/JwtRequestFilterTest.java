@@ -41,15 +41,9 @@ class JwtRequestFilterTest {
 
     @Mock
     JPAUserRepository jpaUserRepository;
-//    = mock(JPAUserRepository.class);
 
     @Mock
     UserRepository userRepository;
-//    = new UserRepository(jpaUserRepository);
-
-//    @Mock
-//    LoginUserService loginUserService;
-//    = new LoginUserService(userRepository);
 
     @Mock
     JwtUtil jwtUtil = new JwtUtil();
