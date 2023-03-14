@@ -23,20 +23,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    public static final String REGISTER_URL = "/users/register";
-    private final static String BEARER = "Bearer ";
+    public static final String REGISTER_URI = "/users/register";
     public static final String AUTHORIZATION = "Authorization";
     public static final String TOKEN_IS_INVALID = "Token is Invalid";
     public static final String FORBIDDEN_REQUEST = "Forbidden Request";
-    public static final String LOGIN_URL = "/users/login";
+    public static final String LOGIN_URI = "/users/login";
     public static final String SWAGGER_UI = "swagger-ui";
     public static final String API_DOCS = "api-docs";
     public static final String TOKEN_IS_EXPIRED = "Token is expired";
-
+    private final static String BEARER = "Bearer ";
     UserRepository userRepository;
 
     JwtUtil jwtUtil;
@@ -54,6 +55,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         this.resolver = resolver;
     }
 
+    private static String getHeader(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -74,10 +78,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         validateToken(request, email);
         System.out.println(email);
         filterChain.doFilter(request, response);
-    }
-
-    private static String getHeader(HttpServletRequest request) {
-        return request.getHeader(AUTHORIZATION);
     }
 
     private void validateToken(HttpServletRequest request, String email) {
@@ -117,8 +117,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isPermitted(HttpServletRequest request) {
-        // TODO: Map of urls which are allowed
-        return request.getRequestURI().equals(REGISTER_URL) || request.getRequestURI().equals(LOGIN_URL)
-                || request.getRequestURI().contains(SWAGGER_UI) || request.getRequestURI().contains(API_DOCS);
+        String requestURI = request.getRequestURI();
+        Set<String> permittedURI = new HashSet<>();
+        getURISet(permittedURI);
+        for (String uri : permittedURI) {
+            if (requestURI.contains(uri)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void getURISet(Set<String> permittedUrls) {
+        permittedUrls.add(REGISTER_URI);
+        permittedUrls.add(LOGIN_URI);
+        permittedUrls.add(SWAGGER_UI);
+        permittedUrls.add(API_DOCS);
     }
 }

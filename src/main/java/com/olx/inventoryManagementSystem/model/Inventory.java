@@ -9,6 +9,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -68,7 +69,7 @@ public class Inventory {
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;
 
-    public Inventory(String type, String location, String createdBy, String updatedBy, Object attributes,
+    public Inventory(String type, String location, Object attributes,
                      float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
         LocalDateTime localDateTime = LocalDateTime.now();
         this.sku = UUID.randomUUID().toString();
@@ -77,11 +78,16 @@ public class Inventory {
         this.location = location;
         this.createdAt = localDateTime;
         this.updatedAt = localDateTime;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
+        this.createdBy = getEmail();
+        this.updatedBy = getEmail();
         this.attributes = attributes;
         this.costPrice = costPrice;
         this.secondaryStatus = secondaryStatus;
+    }
+
+    public static String getEmail() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return email;
     }
 
     public void UpdateStatus(Inventory inventory, ArrayList<SecondaryStatus> secondaryStatus) {
@@ -108,5 +114,13 @@ public class Inventory {
     private void addStatus(Inventory inventory, SecondaryStatus statuses) {
         ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
         statusArrayList.add(statuses);
+    }
+
+    public void updateLastUser(Inventory inventory) {
+        inventory.setUpdatedBy(getEmail());
+    }
+
+    public void updateLastTime(Inventory inventory) {
+        inventory.setUpdatedAt(LocalDateTime.now());
     }
 }

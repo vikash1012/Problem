@@ -14,14 +14,14 @@ public class UserService {
     UserRepository userRepository;
     WebSecurityConfig webSecurityConfig;
 
-    @Autowired(required = false)
+    @Autowired
     public UserService(UserRepository userRepository, WebSecurityConfig webSecurityConfig) {
         this.userRepository = userRepository;
         this.webSecurityConfig = webSecurityConfig;
     }
 
     public String createUser(UserRequest userRequest) throws UserAlreadyExistsException {
-        if (userRepository.ExistByEmail(userRequest.getEmail()) != null) {
+        if (!userRepository.ExistByEmail(userRequest.getEmail()).isEmpty()) {
             throw new UserAlreadyExistsException(USER_ALREADY_EXISTS);
         }
         User user = new User(userRequest.getEmail(), (webSecurityConfig.passwordEncoder().encode(userRequest.getPassword())));

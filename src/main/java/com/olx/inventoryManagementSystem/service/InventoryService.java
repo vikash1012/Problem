@@ -34,43 +34,6 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
-    public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
-        isAcceptableInventoryType(inventoryRequest.getType());
-        // TODO: created and updated at should be based on user.
-        Inventory inventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(), "user",
-                "user", (Object) inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
-                inventoryRequest.getSecondaryStatus());
-        return this.inventoryRepository.create(inventory);
-    }
-
-    public InventoryResponse getInventory(String InventorySku) throws InventoryNotFoundException {
-        Inventory inventory = this.inventoryRepository.find(InventorySku);
-        return getInventoryResponse(inventory);
-    }
-
-    public List<InventoryResponse> getInventories(Pageable pageable) {
-        List<InventoryResponse> listOfGetResponses = new ArrayList<>();
-        Page<Inventory> listOfInventories = this.inventoryRepository.fetch(pageable);
-        for (Inventory inventory : listOfInventories) {
-            listOfGetResponses.add(getInventoryResponse(inventory));
-        }
-        return listOfGetResponses;
-    }
-
-
-    public void updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus)
-            throws InventoryNotFoundException {
-        Inventory inventory = this.inventoryRepository.find(sku);
-        inventory.UpdateStatus(inventory, secondaryStatus);
-        inventoryRepository.save(inventory);
-    }
-
-    public void patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException {
-        Inventory inventory = inventoryRepository.find(sku);
-        updateInventory(field, inventory);
-        inventoryRepository.save(inventory);
-    }
-
     private static InventoryResponse getInventoryResponse(Inventory inventory) {
         return new InventoryResponse(inventory.getSku(), inventory.getType(), inventory.getStatus(),
                 inventory.getLocation(), inventory.getCreatedAt(), inventory.getUpdatedAt(), inventory.getCreatedBy(),
@@ -113,5 +76,45 @@ public class InventoryService {
         foundField.setAccessible(true);
         ReflectionUtils.setField(foundField, inventory, prevValueMap);
     }
+
+    public String createInventory(InventoryRequest inventoryRequest) throws InvalidTypeException {
+        isAcceptableInventoryType(inventoryRequest.getType());
+        Inventory inventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation()
+                , inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
+                inventoryRequest.getSecondaryStatus());
+        return this.inventoryRepository.create(inventory);
+    }
+
+    public InventoryResponse getInventory(String InventorySku) throws InventoryNotFoundException {
+        Inventory inventory = this.inventoryRepository.find(InventorySku);
+        return getInventoryResponse(inventory);
+    }
+
+    public List<InventoryResponse> getInventories(Pageable pageable) {
+        List<InventoryResponse> listOfGetResponses = new ArrayList<>();
+        Page<Inventory> listOfInventories = this.inventoryRepository.fetch(pageable);
+        for (Inventory inventory : listOfInventories) {
+            listOfGetResponses.add(getInventoryResponse(inventory));
+        }
+        return listOfGetResponses;
+    }
+
+    public void updateStatus(String sku, ArrayList<SecondaryStatus> secondaryStatus)
+            throws InventoryNotFoundException {
+        Inventory inventory = this.inventoryRepository.find(sku);
+        inventory.UpdateStatus(inventory, secondaryStatus);
+        inventory.updateLastUser(inventory);
+        inventory.updateLastTime(inventory);
+        inventoryRepository.save(inventory);
+    }
+
+    public void patchInventory(String sku, Map<String, Object> field) throws InventoryNotFoundException {
+        Inventory inventory = inventoryRepository.find(sku);
+        updateInventory(field, inventory);
+        inventory.updateLastUser(inventory);
+        inventory.updateLastTime(inventory);
+        inventoryRepository.save(inventory);
+    }
+
 
 }

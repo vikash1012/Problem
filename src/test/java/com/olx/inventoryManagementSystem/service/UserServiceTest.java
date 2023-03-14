@@ -57,7 +57,8 @@ class UserServiceTest {
     public void ShouldReturnEmailWhenUserIsCreated() throws UserAlreadyExistsException {
         String email = "user@email.com";
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        when(userRepository.ExistByEmail(email)).thenReturn(null);
+        Optional<User> user=Optional.empty();
+        when(userRepository.ExistByEmail(email)).thenReturn(user);
         when(webSecurityConfig.passwordEncoder()).thenReturn(new BCryptPasswordEncoder());
         when(userRepository.create(UserCaptor.capture())).thenReturn(email);
 

@@ -167,8 +167,8 @@ class InventoryServiceTest {
     }
 
     private static Inventory getInventory(InventoryRequest inventoryRequest) {
-        Inventory expectedInventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(), "user",
-                "user", inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
+        Inventory expectedInventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(),
+                inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
                 inventoryRequest.getSecondaryStatus());
         return expectedInventory;
     }
