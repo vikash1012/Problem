@@ -2,6 +2,7 @@ package com.olx.inventoryManagementSystem.controller.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Setter
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode
 public class UserRequest {
 
+    @Email
     @NotBlank
     String email;
 
