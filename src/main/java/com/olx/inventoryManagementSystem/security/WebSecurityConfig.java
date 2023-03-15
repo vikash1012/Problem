@@ -20,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String USERS_URLS = "/users/**";
+    public static final String SWAGGER_UI = "/swagger-ui/**";
+    public static final String API_DOCS = "/v3/api-docs/**";
     @Autowired
     LoadByUsername loadByUsername;
     @Autowired
@@ -37,6 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().disable()
                 .authorizeRequests()
                 .antMatchers(USERS_URLS).permitAll()
+                .antMatchers(SWAGGER_UI).permitAll()
+                .antMatchers(API_DOCS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
