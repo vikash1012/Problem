@@ -33,7 +33,8 @@ class LoadByUsernameTest {
     public void ShouldThrowUsernameNotFoundException(){
         String email = getEmail();
         String expectedResponse = email + " not found.";
-        when(userRepository.ExistByEmail(email)).thenReturn(null);
+        Optional<User> user=Optional.empty();
+        when(userRepository.ExistByEmail(email)).thenReturn(user);
 
         Exception actualError = Assertions.assertThrows(Exception.class, () -> loadByUsername.loadUserByUsername(email));
 

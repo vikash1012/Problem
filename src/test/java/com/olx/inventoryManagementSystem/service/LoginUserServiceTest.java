@@ -2,7 +2,6 @@ package com.olx.inventoryManagementSystem.service;
 
 import com.olx.inventoryManagementSystem.controller.dto.LoginResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
-import com.olx.inventoryManagementSystem.exceptions.InvalidLoginCredential;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import com.olx.inventoryManagementSystem.utils.LoadByUsername;
@@ -15,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -46,7 +46,7 @@ class LoginUserServiceTest {
     @BeforeEach
     void setup() {
         loginUserService = new LoginUserService(userRepository, jwtUtil,loadByUsername, authenticationManager);
-        authenticationManager = mock(AuthenticationManager.class);
+//        authenticationManager = mock(AuthenticationManager.class);
         dummy = new org.springframework.security.core.userdetails.User("user@email.com", "123456", new ArrayList<>());
     }
 
@@ -66,10 +66,9 @@ class LoginUserServiceTest {
 
     @Test
     public void ShouldThrowInvalidLoginCredentialException() throws Exception {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = mock(UsernamePasswordAuthenticationToken.class);
         String expectedResponse = "Invalid Login Credential";
-        when(authenticationManager.authenticate(usernamePasswordAuthenticationToken)).thenThrow(new InvalidLoginCredential("Invalid Login Credential"));
-        loginUserService.createAuthenticationToken(new UserRequest("user@email.com", "hello"));
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken("user@email.com", "hello");
+        when(authenticationManager.authenticate(usernamePasswordAuthenticationToken)).thenThrow(new BadCredentialsException(""));
 
         Exception actualError = Assertions.assertThrows(Exception.class, () -> loginUserService.createAuthenticationToken(new UserRequest("user@email.com", "hello")));
 

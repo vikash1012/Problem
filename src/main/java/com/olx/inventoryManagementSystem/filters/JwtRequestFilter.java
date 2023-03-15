@@ -26,18 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
-    public static final String REGISTER_URI = "/users/register";
-    public static final String LOGIN_URI = "/users/login";
-    public static final String SWAGGER_UI = "swagger-ui";
-    public static final String API_DOCS = "api-docs";
     public static final String AUTHORIZATION = "Authorization";
     public static final String TOKEN_IS_INVALID = "Token is Invalid";
     public static final String FORBIDDEN_REQUEST = "Forbidden Request";

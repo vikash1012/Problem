@@ -38,11 +38,13 @@ public class LoginUserService{
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),
                     userRequest.getPassword()));
+            System.out.println("error");
         } catch (AuthenticationException e) {
             throw new InvalidLoginCredential(INVALID_LOGIN_CREDENTIAL);
         } catch (Exception e){
             throw new Exception(e.getMessage());
         }
+        System.out.println("error");
     }
 
 }
