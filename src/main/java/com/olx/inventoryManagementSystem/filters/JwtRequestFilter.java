@@ -1,5 +1,6 @@
 package com.olx.inventoryManagementSystem.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
 import com.olx.inventoryManagementSystem.exceptions.TokenExpiredException;
@@ -23,19 +24,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     public static final String REGISTER_URI = "/users/register";
-    public static final String AUTHORIZATION = "Authorization";
-    public static final String TOKEN_IS_INVALID = "Token is Invalid";
-    public static final String FORBIDDEN_REQUEST = "Forbidden Request";
     public static final String LOGIN_URI = "/users/login";
     public static final String SWAGGER_UI = "swagger-ui";
     public static final String API_DOCS = "api-docs";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String TOKEN_IS_INVALID = "Token is Invalid";
+    public static final String FORBIDDEN_REQUEST = "Forbidden Request";
     public static final String TOKEN_IS_EXPIRED = "Token is expired";
     private final static String BEARER = "Bearer ";
     UserRepository userRepository;
@@ -116,11 +121,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return true;
     }
 
-    private boolean isPermitted(HttpServletRequest request) {
+    private boolean isPermitted(HttpServletRequest request) throws IOException {
         String requestURI = request.getRequestURI();
-        Set<String> permittedURI = new HashSet<>();
-        getURISet(permittedURI);
-        for (String uri : permittedURI) {
+        String URLString = parseFile("src/main/resources/permittedURIs.json");
+        List<String> PermittedURIs = new ObjectMapper().readValue(URLString, List.class);
+        for (String uri : PermittedURIs) {
             if (requestURI.contains(uri)) {
                 return true;
             }
@@ -128,10 +133,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return false;
     }
 
-    private static void getURISet(Set<String> permittedUrls) {
-        permittedUrls.add(REGISTER_URI);
-        permittedUrls.add(LOGIN_URI);
-        permittedUrls.add(SWAGGER_UI);
-        permittedUrls.add(API_DOCS);
+    private String parseFile(String path) throws IOException {
+        return (new String(Files.readAllBytes(Paths.get(path))).replace("\n", "").replace(" ", ""));
     }
 }

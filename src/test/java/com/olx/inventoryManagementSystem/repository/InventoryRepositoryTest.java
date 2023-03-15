@@ -36,7 +36,7 @@ class InventoryRepositoryTest {
 
     @Test
     void ShouldReturnIdFromDB() {
-        Inventory inventory = new Inventory("car", "Mumbai",  dummyAttributes(), 450000, dummySecondaryStatus());
+        Inventory inventory = new Inventory("car", "Mumbai", "user", dummyAttributes(), 450000, dummySecondaryStatus());
         when(jpaInventoryRepository.save(inventory)).thenReturn(inventory);
 
         String actualId = inventoryRepository.create(inventory);
@@ -48,7 +48,7 @@ class InventoryRepositoryTest {
     @Test
     void ShouldReturnInventoryForValidSku() throws InventoryNotFoundException {
         String sku = "d59fdbd5-0c56-4a79-8905-6989601890be";
-        Inventory expected = new Inventory("car", "Mumbai", dummyAttributes(), 450000, dummySecondaryStatus());
+        Inventory expected = new Inventory("car", "Mumbai","user", dummyAttributes(), 450000, dummySecondaryStatus());
         when(jpaInventoryRepository.findBySku(sku)).thenReturn(Optional.of(expected));
 
         Inventory actual = inventoryRepository.find(sku);
@@ -73,7 +73,7 @@ class InventoryRepositoryTest {
     @Test
     void shouldReturnPageOfInventories() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.asc("sku")));
-        Page<Inventory> expectedInventories = new PageImpl<>(List.of(new Inventory("car", "Mumbai", dummyAttributes(), 450000, dummySecondaryStatus())));
+        Page<Inventory> expectedInventories = new PageImpl<>(List.of(new Inventory("car", "Mumbai","user", dummyAttributes(), 450000, dummySecondaryStatus())));
         when(jpaInventoryRepository.findAll(pageable)).thenReturn(expectedInventories);
 
         Page<Inventory> actualInventories = inventoryRepository.fetch(pageable);
@@ -85,7 +85,7 @@ class InventoryRepositoryTest {
     @Test
     void ShouldReturnSkuAndUpdateStatus() {
         String expectedSku = "d59fdbd5-0c56-4a79-8905-6989601890bf";
-        Inventory inventory = new Inventory("car", "Mumbai", dummyAttributes(), 450000, dummySecondaryStatus());
+        Inventory inventory = new Inventory("car", "Mumbai","user", dummyAttributes(), 450000, dummySecondaryStatus());
         when(jpaInventoryRepository.save(inventory)).thenReturn(inventory);
 
         inventoryRepository.save(inventory);

@@ -17,8 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,21 +41,19 @@ class InventoryServiceTest {
     @Mock
     InventoryRepository inventoryRepository;
 
-
     InventoryService inventoryService;
 
     @Captor
     ArgumentCaptor<Inventory> inventoryCaptor;
 
-
     @BeforeEach
     void setup() {
         inventoryService = new InventoryService(inventoryRepository);
-
     }
 
     @Test
     void ShouldReturnInventorySku() throws Exception {
+        securityContextSetUp();
         String expectedSku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         InventoryRequest inventoryRequest = new InventoryRequest("bike", "mumbai", dummyAttributes(), 450000, dummySecondoryStatus());
         Inventory expectedInventory = getInventory(inventoryRequest);
@@ -107,29 +110,31 @@ class InventoryServiceTest {
 
     @Test
     void ShouldUpdateStatus() throws Exception {
+        securityContextSetUp();
         ArrayList<SecondaryStatus> existingSecondaryStatus = dummySecondoryStatus();
         ArrayList<SecondaryStatus> NewSecondaryStatus = dummySecondoryStatus();
         String sku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
-        Inventory inventory=getInventory(dummyAttributes(),existingSecondaryStatus);
-        NewSecondaryStatus.add(new SecondaryStatus("legal","completed"));
+        Inventory inventory = getInventory(dummyAttributes(), existingSecondaryStatus);
+        NewSecondaryStatus.add(new SecondaryStatus("legal", "completed"));
         when(inventoryRepository.find(sku)).thenReturn(inventory);
 
-        inventoryService.updateStatus(sku,NewSecondaryStatus);
+        inventoryService.updateStatus(sku, NewSecondaryStatus);
 
         verify(inventoryRepository, times(1)).save(inventory);
     }
 
     @Test
     void ShouldUpdateInventory() throws Exception {
+        securityContextSetUp();
         String sku = "09d6afa5-c898-44a1-bddb-d40a4feeee81";
         Map<String, Object> field = new HashMap<>();
         createUpdateField(field);
-        Inventory inventory=getInventory(dummyAttributes(),dummySecondoryStatus());
+        Inventory inventory = getInventory(dummyAttributes(), dummySecondoryStatus());
         when(inventoryRepository.find(sku)).thenReturn(inventory);
 
-        inventoryService.patchInventory(sku,field);
+        inventoryService.patchInventory(sku, field);
 
-        verify(inventoryRepository,times(1)).save(inventory);
+        verify(inventoryRepository, times(1)).save(inventory);
     }
 
     private static ArrayList<SecondaryStatus> dummySecondoryStatus() {
@@ -149,7 +154,7 @@ class InventoryServiceTest {
 
     private static Inventory getInventory(JsonNode attributes, ArrayList<SecondaryStatus> secondaryStatus) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        Inventory inventory = new Inventory(30,"09d6afa5-c898-44a1-bddb-d40a4feeee81", "car","created", "Mumbai", localDateTime,localDateTime,"user", "user", attributes, 450000f, 0f, secondaryStatus);
+        Inventory inventory = new Inventory(30, "09d6afa5-c898-44a1-bddb-d40a4feeee81", "car", "created", "Mumbai", localDateTime, localDateTime, "user", "user", attributes, 450000f, 0f, secondaryStatus);
         return inventory;
     }
 
@@ -168,9 +173,17 @@ class InventoryServiceTest {
 
     private static Inventory getInventory(InventoryRequest inventoryRequest) {
         Inventory expectedInventory = new Inventory(inventoryRequest.getType(), inventoryRequest.getLocation(),
-                inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
+                "user", inventoryRequest.getAttributes(), inventoryRequest.getCostPrice(),
                 inventoryRequest.getSecondaryStatus());
         return expectedInventory;
+    }
+
+    private static void securityContextSetUp() {
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn("user");
     }
 
 }

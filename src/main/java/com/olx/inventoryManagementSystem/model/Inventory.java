@@ -9,7 +9,6 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -69,7 +68,7 @@ public class Inventory {
     @Type(type = "jsonb")
     private ArrayList<SecondaryStatus> secondaryStatus;
 
-    public Inventory(String type, String location, Object attributes,
+    public Inventory(String type, String location, String email, Object attributes,
                      float costPrice, ArrayList<SecondaryStatus> secondaryStatus) {
         LocalDateTime localDateTime = LocalDateTime.now();
         this.sku = UUID.randomUUID().toString();
@@ -78,49 +77,44 @@ public class Inventory {
         this.location = location;
         this.createdAt = localDateTime;
         this.updatedAt = localDateTime;
-        this.createdBy = getEmail();
-        this.updatedBy = getEmail();
+        this.createdBy = email;
+        this.updatedBy = email;
         this.attributes = attributes;
         this.costPrice = costPrice;
         this.secondaryStatus = secondaryStatus;
     }
 
-    public static String getEmail() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return email;
-    }
-
-    public void UpdateStatus(Inventory inventory, ArrayList<SecondaryStatus> secondaryStatus) {
-        ArrayList<SecondaryStatus> inventorySecondaryStatus = inventory.getSecondaryStatus();
+    public void UpdateStatus(ArrayList<SecondaryStatus> secondaryStatus) {
+        ArrayList<SecondaryStatus> inventorySecondaryStatus = this.getSecondaryStatus();
         for (SecondaryStatus statuses : secondaryStatus) {
             if (!inventorySecondaryStatus.contains(statuses)) {
-                this.addStatus(inventory, statuses);
+                this.addStatus(statuses);
                 continue;
             }
-            this.changeStatus(inventory, statuses);
+            this.changeStatus(statuses);
         }
     }
 
-    private void changeStatus(Inventory inventory, SecondaryStatus statuses) {
-        ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
+    private void changeStatus(SecondaryStatus statuses) {
+        ArrayList<SecondaryStatus> statusArrayList = this.getSecondaryStatus();
         for (SecondaryStatus status : statusArrayList) {
             if (status.getName().equals(statuses.getName())) {
                 status.setStatus(statuses.getStatus());
             }
         }
-        inventory.setSecondaryStatus(statusArrayList);
+        this.setSecondaryStatus(statusArrayList);
     }
 
-    private void addStatus(Inventory inventory, SecondaryStatus statuses) {
-        ArrayList<SecondaryStatus> statusArrayList = inventory.getSecondaryStatus();
+    private void addStatus(SecondaryStatus statuses) {
+        ArrayList<SecondaryStatus> statusArrayList = this.getSecondaryStatus();
         statusArrayList.add(statuses);
     }
 
-    public void updateLastUser(Inventory inventory) {
-        inventory.setUpdatedBy(getEmail());
+    public void updateLastUser(String email) {
+        this.setUpdatedBy(email);
     }
 
-    public void updateLastTime(Inventory inventory) {
-        inventory.setUpdatedAt(LocalDateTime.now());
+    public void updateLastTime() {
+        this.setUpdatedAt(LocalDateTime.now());
     }
 }
