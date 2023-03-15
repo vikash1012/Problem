@@ -1,6 +1,5 @@
 package com.olx.inventoryManagementSystem.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -17,13 +16,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -145,10 +142,10 @@ class InventoryServiceTest {
     }
 
     private static JsonNode dummyAttributes() {
-        JsonNode attributes = new ObjectMapper().createObjectNode();
-        ((ObjectNode) attributes).put("vin", "AP31CM9873");
-        ((ObjectNode) attributes).put("make", "Tata");
-        ((ObjectNode) attributes).put("model", "Nexon");
+        ObjectNode attributes = new ObjectMapper().createObjectNode();
+        attributes.put("vin", "AP31CM9873");
+        attributes.put("make", "Tata");
+        attributes.put("model", "Nexon");
         return attributes;
     }
 
@@ -162,12 +159,12 @@ class InventoryServiceTest {
         return new InventoryResponse("09d6afa5-c898-44a1-bddb-d40a4feeee81", "car", "created", "Mumbai", inventory.getCreatedAt(), inventory.getUpdatedAt(), "user", "user", attributes, 450000, secondaryStatus);
     }
 
-    private static void createUpdateField(Map<String, Object> field) throws JsonProcessingException {
+    private static void createUpdateField(Map<String, Object> field)  {
         field.put("status", "procured");
         field.put("costPrice", 460000f);
-        JsonNode attributesValue = new ObjectMapper().createObjectNode();
-        ((ObjectNode) attributesValue).put("color", "red");
-        ((ObjectNode) attributesValue).put("year", 2021);
+        ObjectNode attributesValue = new ObjectMapper().createObjectNode();
+        attributesValue.put("color", "red");
+        attributesValue.put("year", 2021);
         field.put("attributes", attributesValue);
     }
 

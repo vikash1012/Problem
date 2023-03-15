@@ -77,7 +77,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<Object> handlerException( Exception ex) {
+    public ResponseEntity<Object> handlerException(Exception ex) {
         final ExceptionResponse exceptionResponse = new ExceptionResponse("Unknown", ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -26,7 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -35,6 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     public static final String FORBIDDEN_REQUEST = "Forbidden Request";
     public static final String TOKEN_IS_EXPIRED = "Token is expired";
     private final static String BEARER = "Bearer ";
+
     UserRepository userRepository;
 
     JwtUtil jwtUtil;
@@ -114,9 +117,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isPermitted(HttpServletRequest request) throws IOException {
-        String requestURI = request.getRequestURI();
-        String URLString = parseFile("src/main/resources/permittedURIs.json");
-        List<String> PermittedURIs = new ObjectMapper().readValue(URLString, List.class);
+//        String requestURI = request.getRequestURI();
+//        String URLString = parseFile("src/main/resources/permittedURIs.json");
+//        List<String> PermittedURIs = new ObjectMapper().readValue(URLString, List.class);
         for (String uri : PermittedURIs) {
             if (requestURI.contains(uri)) {
                 return true;

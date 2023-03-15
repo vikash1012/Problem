@@ -78,6 +78,26 @@ class CustomExceptionHandlerTest {
     }
 
     @Test
+    void ShouldReturnTokenExpiredResponse() {
+        TokenExpiredException exception = new TokenExpiredException("Token is expired");
+        ExceptionResponse exceptionResponse = new ExceptionResponse("Expired", exception.getMessage());
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+
+        ResponseEntity<Object> actualResponse = customExceptionHandler.handlerTokenExpiredException(exception);
+
+        assertEquals(expectedResponse, actualResponse);
+    }
+    @Test
+    void ShouldReturnInvalidTokenResponse() {
+        InvalidTokenException exception = new InvalidTokenException("Token is Invalid");
+        ExceptionResponse exceptionResponse = new ExceptionResponse("InvalidToken", exception.getMessage());
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+
+        ResponseEntity<Object> actualResponse = customExceptionHandler.handlerInvalidTokenException(exception);
+
+        assertEquals(expectedResponse, actualResponse);
+    }
+    @Test
     void ShouldReturnInvalidTokenResponse() {
         InvalidTokenException exception = new InvalidTokenException("Token is Invalid");
         ExceptionResponse exceptionResponse = new ExceptionResponse("InvalidToken", exception.getMessage());
