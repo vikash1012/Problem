@@ -1,6 +1,5 @@
 package com.olx.inventoryManagementSystem.filters;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
 import com.olx.inventoryManagementSystem.exceptions.TokenExpiredException;
@@ -24,11 +23,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -37,6 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     public static final String FORBIDDEN_REQUEST = "Forbidden Request";
     public static final String TOKEN_IS_EXPIRED = "Token is expired";
     private final static String BEARER = "Bearer ";
+    private static final String[] PERMITTED_URI = new String[]{"/users/register", "/users/login", "swagger-ui", "api-docs"};
 
     UserRepository userRepository;
 
@@ -117,10 +112,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isPermitted(HttpServletRequest request) throws IOException {
-//        String requestURI = request.getRequestURI();
-//        String URLString = parseFile("src/main/resources/permittedURIs.json");
-//        List<String> PermittedURIs = new ObjectMapper().readValue(URLString, List.class);
-        for (String uri : PermittedURIs) {
+        String requestURI = request.getRequestURI();
+        for (String uri : PERMITTED_URI) {
             if (requestURI.contains(uri)) {
                 return true;
             }
@@ -128,7 +121,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return false;
     }
 
-    private String parseFile(String path) throws IOException {
-        return (new String(Files.readAllBytes(Paths.get(path))).replace("\n", "").replace(" ", ""));
-    }
 }

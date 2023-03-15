@@ -45,8 +45,7 @@ class LoginUserServiceTest {
 
     @BeforeEach
     void setup() {
-        loginUserService = new LoginUserService(userRepository, jwtUtil,loadByUsername, authenticationManager);
-//        authenticationManager = mock(AuthenticationManager.class);
+        loginUserService = new LoginUserService(userRepository, jwtUtil, loadByUsername, authenticationManager);
         dummy = new org.springframework.security.core.userdetails.User("user@email.com", "123456", new ArrayList<>());
     }
 
@@ -65,7 +64,7 @@ class LoginUserServiceTest {
     }
 
     @Test
-    public void ShouldThrowInvalidLoginCredentialException() throws Exception {
+    public void ShouldThrowInvalidLoginCredentialException() {
         String expectedResponse = "Invalid Login Credential";
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken("user@email.com", "hello");
         when(authenticationManager.authenticate(usernamePasswordAuthenticationToken)).thenThrow(new BadCredentialsException(""));

@@ -2,6 +2,7 @@ package com.olx.inventoryManagementSystem.filters;
 
 import com.olx.inventoryManagementSystem.exceptions.ForbiddenRequestException;
 import com.olx.inventoryManagementSystem.exceptions.InvalidTokenException;
+import com.olx.inventoryManagementSystem.exceptions.TokenExpiredException;
 import com.olx.inventoryManagementSystem.repository.JPAUserRepository;
 import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.security.WebSecurityConfig;
@@ -92,7 +93,7 @@ class JwtRequestFilterTest {
     }
 
     @Test
-    void ShouldThrowRuntimeExceptionWhenTokenisInvalid() throws ServletException, IOException {
+    void ShouldResolveInvalidTokenException() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
@@ -101,6 +102,18 @@ class JwtRequestFilterTest {
         jwtRequestFilter.doFilterInternal(request, response, filterChain);
 
         verify(resolver, times(1)).resolveException(request, response, null, new InvalidTokenException("Token is Invalid"));
+    }
+
+    @Test
+    void ShouldResolveTokenExpiredException() throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
+        request.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdW1hMUBnbWFpbC5jb20iLCJleHAiOjE2Nzg4NzM5MjIsImlhdCI6MTY3ODg3MzkyMX0.0SJQ7Jyg9v-XNWxZ7zrOZ4TleTCUi_7SbILOcnfKj2o");
+
+        jwtRequestFilter.doFilterInternal(request, response, filterChain);
+
+        verify(resolver, times(1)).resolveException(request, response, null, new TokenExpiredException("Token is expired"));
     }
 
     @Test
@@ -124,7 +137,7 @@ class JwtRequestFilterTest {
     }
 
     @Test
-    void WhenAuthorizationHeaderIsNullAndIsNotPermitted() throws IOException, ServletException {
+    void ShouldResolveForbiddenRequestException() throws IOException, ServletException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
