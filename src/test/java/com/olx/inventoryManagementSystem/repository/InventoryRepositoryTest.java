@@ -84,7 +84,6 @@ class InventoryRepositoryTest {
 
     @Test
     void ShouldReturnSkuAndUpdateStatus() {
-        String expectedSku = "d59fdbd5-0c56-4a79-8905-6989601890bf";
         Inventory inventory = new Inventory("car", "Mumbai","user", dummyAttributes(), 450000, dummySecondaryStatus());
         when(jpaInventoryRepository.save(inventory)).thenReturn(inventory);
 
@@ -93,9 +92,6 @@ class InventoryRepositoryTest {
         verify(jpaInventoryRepository, times(1)).save(inventory);
     }
 
-    private void verifyMocksForUpdateInventory(Inventory inventory) {
-        verify(jpaInventoryRepository, times(1)).save(inventory);
-    }
 
     private static ArrayList<SecondaryStatus> dummySecondaryStatus() {
         ArrayList<SecondaryStatus> secondaryStatus = new ArrayList<>();
@@ -105,10 +101,10 @@ class InventoryRepositoryTest {
     }
 
     private static JsonNode dummyAttributes() {
-        JsonNode attributes = new ObjectMapper().createObjectNode();
-        ((ObjectNode) attributes).put("vin", "AP31CM9873");
-        ((ObjectNode) attributes).put("make", "Tata");
-        ((ObjectNode) attributes).put("model", "Nexon");
+        ObjectNode attributes = new ObjectMapper().createObjectNode();
+        attributes.put("vin", "AP31CM9873");
+        attributes.put("make", "Tata");
+        attributes.put("model", "Nexon");
         return attributes;
     }
 }

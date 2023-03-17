@@ -107,19 +107,19 @@ public class InventoryService {
 
     private static void updateAttributes(Inventory inventory, Object value, Field foundField) {
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<Map<String, Object>>() {
+        Map<String, Object> valueMap = mapper.convertValue(value, new TypeReference<>() {
         });
         Map<String, Object> prevValueMap = mapper.convertValue(inventory.getAttributes(),
-                new TypeReference<Map<String, Object>>() {
+                new TypeReference<>() {
                 });
         prevValueMap.putAll(valueMap);
         foundField.setAccessible(true);
         ReflectionUtils.setField(foundField, inventory, prevValueMap);
     }
 
-    public static String getEmail() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return email;
+    private static String getEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+
     }
 
 }

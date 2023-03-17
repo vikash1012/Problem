@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 class JwtUtilTest {
 
@@ -20,8 +19,6 @@ class JwtUtilTest {
     private static String jwtToken;
 
     JwtUtil jwtUtil;
-
-    UserDetails userDetails = mock(UserDetails.class);
 
     @BeforeEach
     void init() {
@@ -56,6 +53,4 @@ class JwtUtilTest {
         assertFalse(actualToken.isEmpty());
         assertEquals(email,"user@email.com");
     }
-
-    // TODO: test cases are just for the coverage not for the usecase
 }

@@ -3,7 +3,6 @@ package com.olx.inventoryManagementSystem.controller;
 import com.olx.inventoryManagementSystem.controller.dto.LoginResponse;
 import com.olx.inventoryManagementSystem.controller.dto.RegistrationResponse;
 import com.olx.inventoryManagementSystem.controller.dto.UserRequest;
-import com.olx.inventoryManagementSystem.exceptions.InvalidLoginCredential;
 import com.olx.inventoryManagementSystem.exceptions.UserAlreadyExistsException;
 import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.service.UserService;

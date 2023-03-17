@@ -23,7 +23,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,8 +39,6 @@ class JwtRequestFilterTest {
 
     JwtRequestFilter jwtRequestFilter;
 
-    @Mock
-    JPAUserRepository jpaUserRepository;
 
     @Mock
     UserRepository userRepository;

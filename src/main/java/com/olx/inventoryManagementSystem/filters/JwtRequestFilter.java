@@ -7,6 +7,7 @@ import com.olx.inventoryManagementSystem.repository.UserRepository;
 import com.olx.inventoryManagementSystem.utils.JwtUtil;
 import com.olx.inventoryManagementSystem.utils.LoadByUsername;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,12 +72,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
         validateToken(request, email);
-        System.out.println(email);
         filterChain.doFilter(request, response);
     }
 
     private void validateToken(HttpServletRequest request, String email) {
-
         UserDetails userDetails = this.loadByUsername.loadUserByUsername(email);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -92,7 +91,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             resolver.resolveException(request, response, null, new TokenExpiredException(TOKEN_IS_EXPIRED));
         } catch (SignatureException e) {
             resolver.resolveException(request, response, null, new InvalidTokenException(TOKEN_IS_INVALID));
+        } catch (MalformedJwtException e) {
+            resolver.resolveException(request, response, null, new TokenExpiredException(TOKEN_IS_INVALID));
         } catch (Exception e) {
+            e.printStackTrace();
             resolver.resolveException(request, response, null, new Exception(e.getMessage()));
         }
         return email;
@@ -111,7 +113,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return true;
     }
 
-    private boolean isPermitted(HttpServletRequest request) throws IOException {
+    private boolean isPermitted(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         for (String uri : PERMITTED_URI) {
             if (requestURI.contains(uri)) {

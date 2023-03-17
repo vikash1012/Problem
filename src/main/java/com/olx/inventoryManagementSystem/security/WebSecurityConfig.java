@@ -1,7 +1,6 @@
 package com.olx.inventoryManagementSystem.security;
 
 import com.olx.inventoryManagementSystem.filters.JwtRequestFilter;
-import com.olx.inventoryManagementSystem.service.LoginUserService;
 import com.olx.inventoryManagementSystem.utils.LoadByUsername;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
